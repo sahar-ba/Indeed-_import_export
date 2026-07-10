@@ -79,7 +79,9 @@ export default function ListingCreatePage() {
   const [submitError, setSubmitError] = useState(null);
   const [attachments, setAttachments] = useState([]);
   const [isLoadingListing, setIsLoadingListing] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  const [formDataToSubmit, setFormDataToSubmit] = useState(null);
   const { id } = useParams();
   const isEditMode = Boolean(id);
   const navigate = useNavigate();
@@ -157,7 +159,13 @@ async function onSubmit(data) {
     );
   }
 }
+async function handleConfirmEdit() {
+  setShowConfirmModal(false);
 
+  if (!formDataToSubmit) return;
+
+  await onSubmit(formDataToSubmit);
+}
   const cardStyle = {
     background: "#ffffff",
     borderRadius: "24px",
@@ -228,8 +236,17 @@ async function onSubmit(data) {
         {isLoadingListing ? (
           <p style={{ textAlign: "center", color: "#6b7280" }}>Chargement de l'annonce...</p>
         ) : (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* SECTION PRODUIT */}
+<form
+  onSubmit={handleSubmit((data) => {
+    if (isEditMode) {
+      setFormDataToSubmit(data);
+      setShowConfirmModal(true);
+      return;
+    }
+
+    onSubmit(data);
+  })}
+>          {/* SECTION PRODUIT */}
 
           <div style={cardStyle}>
             <h2 style={sectionTitleStyle}>
@@ -478,7 +495,94 @@ async function onSubmit(data) {
           >
             {isEditMode ? "💾 Enregistrer les modifications" : "🚀 Publier l'annonce"}
           </button>
+          {showConfirmModal && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.4)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 9999,
+    }}
+  >
+    <div
+      style={{
+        background: "#fff",
+        width: "420px",
+        maxWidth: "90%",
+        borderRadius: "20px",
+        padding: "28px",
+        boxShadow:
+          "0 20px 40px rgba(0,0,0,0.2)",
+      }}
+    >
+      <h3
+        style={{
+          marginTop: 0,
+          marginBottom: "12px",
+        }}
+      >
+        ✏️ Modifier l'annonce ?
+      </h3>
+
+      <p
+        style={{
+          color: "#6b7280",
+          lineHeight: 1.6,
+          marginBottom: "24px",
+        }}
+      >
+        Les modifications apportées à cette
+        annonce seront enregistrées immédiatement.
+      </p>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: "12px",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() =>
+            setShowConfirmModal(false)
+          }
+          style={{
+            padding: "10px 16px",
+            border:
+              "1px solid #d1d5db",
+            borderRadius: "10px",
+            background: "#fff",
+            cursor: "pointer",
+          }}
+        >
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          onClick={handleConfirmEdit}
+          style={{
+            padding: "10px 16px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#4f46e5",
+            color: "#fff",
+            cursor: "pointer",
+            fontWeight: 600,
+          }}
+        >
+          Oui, modifier
+        </button>
+      </div>
+    </div>
+  </div>
+)}
         </form>
+        
         )}
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { getCurrentUser, loginUser } from "../api/auth";
+import { getCurrentUser, loginUser, registerUser } from "../api/auth";
+import { saveToken, getToken, clearToken, isTokenExpired } from "../utils/tokenStorage";
 
 const AuthContext = createContext(null);
 
@@ -8,25 +9,54 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
+    const token = getToken();
+
     if (!token) {
       setIsLoading(false);
       return;
     }
+
+    if (isTokenExpired(token)) {
+      // Token périmé : inutile d'appeler l'API, on nettoie directement et
+      // on considère l'utilisateur déconnecté.
+      clearToken();
+      setIsLoading(false);
+      return;
+    }
+
     getCurrentUser()
       .then(setUser)
+      .catch(() => clearToken())
       .finally(() => setIsLoading(false));
   }, []);
 
-  async function login(credentials) {
+  /**
+   * @param {object} credentials
+   * @param {boolean} remember - true = reste connecté après fermeture du
+   *   navigateur (localStorage), false = session le temps de l'onglet
+   *   (sessionStorage). Correspond à une case "Se souvenir de moi".
+   */
+  async function login(credentials, remember = true) {
     const { user: loggedInUser, token } = await loginUser(credentials);
-    localStorage.setItem("auth_token", token);
+    saveToken(token, remember);
     setUser(loggedInUser);
     return loggedInUser;
   }
 
+  /**
+   * L'inscription connecte directement l'utilisateur (le backend renvoie
+   * un token comme pour le login), pour ne pas lui demander de se
+   * reconnecter juste après avoir créé son compte.
+   */
+  async function register(payload, remember = true) {
+    const { user: registeredUser, token } = await registerUser(payload);
+    saveToken(token, remember);
+    setUser(registeredUser);
+    return registeredUser;
+  }
+
   function logout() {
-    localStorage.removeItem("auth_token");
+    clearToken();
     setUser(null);
   }
 
@@ -35,7 +65,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

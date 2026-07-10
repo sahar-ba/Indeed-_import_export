@@ -160,4 +160,64 @@ export const mockMatches = [
       country: "France",
     },
   },
+
+  {
+    id: "m2",
+
+    listingId: "2",
+
+    matchScore: 78,
+
+    reasons: {
+      product:
+        "Spécifications techniques alignées avec le cahier des charges",
+
+      price:
+        "Offre légèrement au-dessus du budget cible (+4%)",
+
+      location:
+        "Transport maritime direct disponible",
+
+      reliability:
+        "Fabricant certifié CE, historique de 5 ans",
+
+      deadline:
+        "Délai de production compatible avec l'échéance",
+    },
+
+    counterpart: {
+      name: "SolarTech Guangzhou",
+      country: "Chine",
+    },
+  },
+
+  {
+    id: "m3",
+
+    listingId: "1",
+
+    matchScore: 65,
+
+    reasons: {
+      product:
+        "Produit similaire, variété légèrement différente",
+
+      price:
+        "Budget compatible sous condition de volume",
+
+      location:
+        "Distance logistique plus importante",
+
+      reliability:
+        "Nouvelle entreprise, pas encore d'historique",
+
+      deadline:
+        "Délai à confirmer avec le fournisseur",
+    },
+
+    counterpart: {
+      name: "Olive Trade Iberia",
+      country: "Espagne",
+    },
+  },
 ];

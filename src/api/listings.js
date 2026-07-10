@@ -1,25 +1,69 @@
 import { createResourceApi } from "./createResourceApi";
+import apiClient, { USE_MOCKS } from "./client";
 import { delay } from "../utils/delay";
 import { mockListings } from "../mocks/listings.mock";
 
 const CURRENT_USER_ID = "user_42";
 
-function filterMock(data, { country, category, type } = {}) {
+function filterMock(data, { country, category, type, price, certifications, q } = {}) {
+  const normalizedQuery = q?.trim().toLowerCase();
+
   return data
     .filter((l) => l.status !== "suspended" && l.status !== "closed")
     .filter(
       (l) =>
         (!country || l.country === country) &&
         (!category || l.category === category) &&
-        (!type || l.type === type)
+        (!type || l.type === type) &&
+        (!price || (l.price >= price.min && l.price <= price.max)) &&
+        // "au moins une" des certifications cochées, pas "toutes" — sinon
+        // le filtre serait presque toujours vide.
+        (!certifications ||
+          certifications.length === 0 ||
+          certifications.some((cert) => l.certifications?.includes(cert))) &&
+        // Recherche textuelle libre : produit, catégorie, pays, certifications
+        (!normalizedQuery ||
+          [l.product, l.category, l.country, ...(l.certifications || [])]
+            .filter(Boolean)
+            .some((field) => field.toLowerCase().includes(normalizedQuery)))
     );
 }
 
 const listingsApi = createResourceApi("listings", mockListings, { filterMock });
 
-// Alias explicites pour un code appelant plus lisible dans les pages
+// Alias explicite pour un code appelant plus lisible dans les pages
 export const getListings = listingsApi.getAll;
-export const getListingById = listingsApi.getById;
+
+/**
+ * GET /listings/:id — récupère le détail d'une annonce.
+ * Implémentation explicite (plutôt que le simple alias générique) pour
+ * gérer proprement le cas "annonce introuvable" (404) et normaliser la
+ * forme de la réponse, certains backends renvoyant `{ listing: {...} }`
+ * plutôt que l'objet directement.
+ */
+export async function getListingById(id) {
+  if (USE_MOCKS) {
+    await delay(200);
+    const listing = mockListings.find((entry) => entry.id === id);
+    if (!listing) {
+      throw new Error("Cette annonce n'existe pas ou a été supprimée.");
+    }
+    return listing;
+  }
+
+  try {
+    const { data } = await apiClient.get(`/listings/${id}`);
+    // Tolère les deux formes de réponse possibles côté backend
+    return data?.listing ?? data;
+  } catch (err) {
+    if (err.response?.status === 404) {
+      throw new Error("Cette annonce n'existe pas ou a été supprimée.");
+    }
+    throw new Error(
+      err.response?.data?.message || "Impossible de charger cette annonce pour le moment."
+    );
+  }
+}
 
 export async function createListing(payload) {
   const created = await listingsApi.create({

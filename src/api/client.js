@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken, clearToken } from "../utils/tokenStorage";
 
 // Bascule ce flag à false quand l'API backend (Stagiaire 2) est prête
 export const USE_MOCKS = true;
@@ -10,21 +11,22 @@ const apiClient = axios.create({
   },
 });
 
-// Intercepteur : injecte le token d'auth automatiquement
+// Intercepteur : injecte le token d'auth automatiquement (localStorage ou
+// sessionStorage selon l'option "rester connecté" choisie à la connexion)
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("auth_token");
+  const token = getToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Intercepteur : gestion centralisée des erreurs 401 (session expirée)
+// Intercepteur : gestion centralisée des erreurs 401 (session expirée ou invalide)
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("auth_token");
+      clearToken();
       window.location.href = "/auth/login";
     }
     return Promise.reject(error);

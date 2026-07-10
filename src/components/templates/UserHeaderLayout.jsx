@@ -1,13 +1,20 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { colors, spacing, typography } from "../../styles/tokens";
 import { useAuth } from "../../context/AuthContext";
+import { FaHeart } from "react-icons/fa";
 
 const NAV_ITEMS = [
   { to: "/listings/catalog", label: "Annonces" },
   { to: "/listings/mine", label: "Mes annonces" },
+//     {
+// label: "Favoris",
+// to: "/favorites",
+// },
+  { to: "/matching", label: "Matching IA" },
   { to: "/messages", label: "Messagerie" },
   { to: "/billing", label: "Facturation" },
   { to: "/profile", label: "Profil" },
+
 ];
 
 // Routes qui doivent occuper toute la largeur/hauteur disponible,
@@ -86,7 +93,6 @@ export default function UserHeaderLayout() {
               </NavLink>
             ))}
           </nav>
-
           {/* Bouton Deconnexion */}
           <button
             onClick={handleLogout}

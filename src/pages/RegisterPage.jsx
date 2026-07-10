@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
-import { registerUser } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function RegisterPage() {
   const {
@@ -11,12 +11,17 @@ export default function RegisterPage() {
     setValue,
   } = useForm();
 
+  // Alias pour éviter le conflit de nom avec `register` de react-hook-form
+  const { register: registerAccount } = useAuth();
+
   const [submitError, setSubmitError] = useState(null);
   const navigate = useNavigate();
 
   async function onSubmit(data) {
     try {
-      await registerUser(data);
+      // L'inscription connecte directement l'utilisateur (le backend
+      // renvoie un token, comme au login) — pas besoin de se reconnecter.
+      await registerAccount(data);
       navigate("/profile/complete");
     } catch (err) {
       setSubmitError(err.message);

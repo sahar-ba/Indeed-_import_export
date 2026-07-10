@@ -245,8 +245,28 @@ function ConversationThread({ conversation, onRefetch }) {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
           <div>
-            <p style={{ margin: 0, fontWeight: 700, color: "#111827" }}>
+            <p style={{ margin: 0, fontWeight: 700, color: "#111827", display: "flex", alignItems: "center", gap: 8 }}>
               {conversation.counterpart.name}
+              {conversation.counterpart.role && (
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    padding: "2px 8px",
+                    borderRadius: 999,
+                    background: "#eef2ff",
+                    color: "#4f46e5",
+                    fontSize: 11,
+                    fontWeight: 700,
+                  }}
+                >
+                  {conversation.counterpart.role === "importer"
+                    ? "Importateur"
+                    : conversation.counterpart.role === "exporter"
+                    ? "Exportateur"
+                    : conversation.counterpart.role}
+                </span>
+              )}
             </p>
             <p style={{ margin: 0, fontSize: 12, color: "#6b7280" }}>
               {conversation.listingProduct} · {conversation.counterpart.country}

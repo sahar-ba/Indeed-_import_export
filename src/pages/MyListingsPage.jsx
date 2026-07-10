@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import FilterBar from "../components/organisms/FilterBar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useResourceList } from "../hooks/useResourceList";
 import { getMyListings, updateListing } from "../api/listings";
 import AsyncState from "../components/organisms/AsyncState";
@@ -69,6 +69,8 @@ const CATEGORY_FIELD = {
   ],
 };
 export default function MyListingsPage() {
+  const navigate = useNavigate();
+
   const {
     items,
     isLoading,
@@ -79,7 +81,8 @@ export default function MyListingsPage() {
   const [pendingId, setPendingId] =
     useState(null);
 
-  const [confirmCloseId, setConfirmCloseId] =
+  // Action en attente de confirmation : { type: "edit" | "suspend" | "reactivate" | "close", listing }
+  const [confirmAction, setConfirmAction] =
     useState(null);
 const [filters, setFilters] = useState({});
   async function handleStatusChange(
@@ -98,6 +101,72 @@ const [filters, setFilters] = useState({});
       setPendingId(null);
     }
   }
+
+  function requestEdit(listing) {
+  navigate(`/listings/${listing.id}/edit`);
+}
+
+  function requestSuspendToggle(listing) {
+    setConfirmAction({
+      type:
+        listing.status === "suspended"
+          ? "reactivate"
+          : "suspend",
+      listing,
+    });
+  }
+
+  function requestClose(listing) {
+    setConfirmAction({ type: "close", listing });
+  }
+
+  async function handleConfirm() {
+    if (!confirmAction) return;
+    const { type, listing } = confirmAction;
+
+    if (type === "edit") {
+      setConfirmAction(null);
+      navigate(`/listings/${listing.id}/edit`);
+      return;
+    }
+
+    if (type === "suspend") {
+      await handleStatusChange(listing.id, "suspended");
+    } else if (type === "reactivate") {
+      await handleStatusChange(listing.id, "active");
+    } else if (type === "close") {
+      await handleStatusChange(listing.id, "closed");
+    }
+
+    setConfirmAction(null);
+  }
+
+  const CONFIRM_CONTENT = {
+    suspend: {
+      icon: "⏸️",
+      title: "Suspendre l'annonce ?",
+      message:
+        "L'annonce ne sera plus visible publiquement tant qu'elle est suspendue. Vous pourrez la réactiver à tout moment.",
+      confirmLabel: "Oui, suspendre",
+      confirmColor: "#dc2626",
+    },
+    reactivate: {
+      icon: "▶️",
+      title: "Réactiver l'annonce ?",
+      message:
+        "L'annonce redeviendra visible publiquement dans le catalogue.",
+      confirmLabel: "Oui, réactiver",
+      confirmColor: "#4f46e5",
+    },
+    close: {
+      icon: "⚠️",
+      title: "Clôturer l'annonce ?",
+      message:
+        "Cette action rendra l'annonce clôturée. Elle ne sera plus affichée comme active.",
+      confirmLabel: "Oui, clôturer",
+      confirmColor: "#dc2626",
+    },
+  };
 const filterFields = useMemo(
   () => [
     TYPE_FIELD,
@@ -309,13 +378,14 @@ const filteredItems = items.filter(
                       </ActionButton>
                     </Link>
 
-                    <Link
-                      to={`/listings/${listing.id}/edit`}
+                    <ActionButton
+                      disabled={isPending}
+                      onClick={() =>
+                        requestEdit(listing)
+                      }
                     >
-                      <ActionButton>
-                        Modifier
-                      </ActionButton>
-                    </Link>
+                      Modifier
+                    </ActionButton>
 
                     {listing.status !==
                       "closed" && (
@@ -324,12 +394,8 @@ const filteredItems = items.filter(
                           isPending
                         }
                         onClick={() =>
-                          handleStatusChange(
-                            listing.id,
-                            listing.status ===
-                              "suspended"
-                              ? "active"
-                              : "suspended"
+                          requestSuspendToggle(
+                            listing
                           )
                         }
                       >
@@ -348,8 +414,8 @@ const filteredItems = items.filter(
                           isPending
                         }
                         onClick={() =>
-                          setConfirmCloseId(
-                            listing.id
+                          requestClose(
+                            listing
                           )
                         }
                       >
@@ -364,9 +430,9 @@ const filteredItems = items.filter(
         </AsyncState>
       </div>
 
-      {/* POPUP CONFIRMATION */}
+      {/* POPUP CONFIRMATION (modifier / suspendre / réactiver / clôturer) */}
 
-      {confirmCloseId && (
+      {confirmAction && (
         <div
           style={{
             position: "fixed",
@@ -398,7 +464,8 @@ const filteredItems = items.filter(
                 color: "#111827",
               }}
             >
-              ⚠️ Clôturer l'annonce ?
+              {CONFIRM_CONTENT[confirmAction.type].icon}{" "}
+              {CONFIRM_CONTENT[confirmAction.type].title}
             </h3>
 
             <p
@@ -408,10 +475,7 @@ const filteredItems = items.filter(
                 marginBottom: "24px",
               }}
             >
-              Cette action rendra
-              l'annonce clôturée.
-              Elle ne sera plus
-              affichée comme active.
+              {CONFIRM_CONTENT[confirmAction.type].message}
             </p>
 
             <div
@@ -425,10 +489,9 @@ const filteredItems = items.filter(
               <button
                 type="button"
                 onClick={() =>
-                  setConfirmCloseId(
-                    null
-                  )
+                  setConfirmAction(null)
                 }
+                disabled={pendingId === confirmAction.listing.id}
                 style={{
                   padding:
                     "10px 16px",
@@ -448,16 +511,8 @@ const filteredItems = items.filter(
 
               <button
                 type="button"
-                onClick={async () => {
-                  await handleStatusChange(
-                    confirmCloseId,
-                    "closed"
-                  );
-
-                  setConfirmCloseId(
-                    null
-                  );
-                }}
+                onClick={handleConfirm}
+                disabled={pendingId === confirmAction.listing.id}
                 style={{
                   padding:
                     "10px 16px",
@@ -465,14 +520,19 @@ const filteredItems = items.filter(
                   borderRadius:
                     "10px",
                   background:
-                    "#dc2626",
+                    CONFIRM_CONTENT[confirmAction.type]
+                      .confirmColor,
                   color: "#fff",
-                  cursor:
-                    "pointer",
+                  cursor: pendingId === confirmAction.listing.id
+                    ? "not-allowed"
+                    : "pointer",
+                  opacity: pendingId === confirmAction.listing.id ? 0.7 : 1,
                   fontWeight: 600,
                 }}
               >
-                Oui, clôturer
+                {pendingId === confirmAction.listing.id
+                  ? "⏳ ..."
+                  : CONFIRM_CONTENT[confirmAction.type].confirmLabel}
               </button>
             </div>
           </div>

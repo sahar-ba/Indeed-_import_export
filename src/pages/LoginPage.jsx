@@ -11,6 +11,7 @@ export default function LoginPage() {
   } = useForm();
 
   const [submitError, setSubmitError] = useState(null);
+  const [remember, setRemember] = useState(true);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function LoginPage() {
     setSubmitError(null);
 
     try {
-      await login(data);
+      await login(data, remember);
       navigate("/listings/catalog");
     } catch (err) {
       setSubmitError(
@@ -179,15 +180,35 @@ export default function LoginPage() {
             </div>
           )}
 
-{/* Mot de passe oublié */}
+{/* Se souvenir de moi + mot de passe oublié */}
 
 <div
   style={{
     display: "flex",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: "20px",
   }}
 >
+  <label
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      fontSize: "14px",
+      color: "#374151",
+      cursor: "pointer",
+    }}
+  >
+    <input
+      type="checkbox"
+      checked={remember}
+      onChange={(e) => setRemember(e.target.checked)}
+      style={{ width: "16px", height: "16px", cursor: "pointer" }}
+    />
+    Rester connecté
+  </label>
+
   <Link
     to="/forgot-password"
     style={{
@@ -246,4 +267,3 @@ export default function LoginPage() {
     </div>
   );
 }
-``

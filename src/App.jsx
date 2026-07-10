@@ -13,7 +13,6 @@ import OnboardingListingPage from "./pages/OnboardingListingPage";
 import ListingCreatePage from "./pages/ListingCreatePage";
 import MyListingsPage from "./pages/MyListingsPage";
 import ContactPage from "./pages/ContactPage";
-import ComingSoonPage from "./pages/ComingSoonPage";
 import BillingPage from "./features/billing/pages/BillingPage";
 import SubscriptionPage from "./features/billing/pages/SubscriptionPage";
 import PaymentHistoryPage from "./features/billing/pages/PaymentHistoryPage";
@@ -26,6 +25,8 @@ import ListingsShowcasePage from "./pages/ListingsShowcasePage";
 import MessagesPage from "./features/messaging/pages/MessagesPage";
 import ProfilePage from "./pages/ProfilePage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import FavoritesPage from "./pages/FavoritesPage";
+import MatchingPage from "./pages/MatchingPage";
 
 export default function App() {
   return (
@@ -40,10 +41,9 @@ export default function App() {
             <Route
               path="/matching"
               element={
-                <ComingSoonPage
-                  title="Matching IA"
-                  description="Les correspondances proposees par l'agent IA s'afficheront ici, des que le format de l'API du Stagiaire 3 sera defini."
-                />
+                <ProtectedRoute>
+                  <MatchingPage />
+                </ProtectedRoute>
               }
             />
 
@@ -155,6 +155,10 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+  path="/favorites"
+  element={<FavoritesPage />}
+/>
             <Route
               path="/listings/create"
               element={
