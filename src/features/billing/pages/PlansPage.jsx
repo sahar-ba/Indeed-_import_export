@@ -44,15 +44,19 @@ export default function PlansPage() {
       <AsyncState isLoading={isLoading} error={error}>
         <SmartRecommendationBanner recommendation={recommendation} />
         <div
+          className="grid-3-col"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
             gap: spacing.lg,
             alignItems: "stretch",
           }}
         >
           {mockPlans
-            .filter((plan) => !subscription?.usedPlanIds?.includes(plan.id))
+            // Seul le plan Gratuit (essai) ne peut pas être repris une fois
+            // utilisé, pour éviter les abus. Les plans payants (pay-per-use,
+            // premium) doivent toujours rester proposables, sinon un
+            // utilisateur ayant déjà été Premium ne pourrait plus jamais
+            // se réabonner depuis cette page.
+            .filter((plan) => !(plan.id === "free" && subscription?.usedPlanIds?.includes("free")))
             .map((plan) => (
               <PricingCard
                 key={plan.id}

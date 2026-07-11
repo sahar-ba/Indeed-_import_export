@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import FilterBar from "../components/organisms/FilterBar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useResourceList } from "../hooks/useResourceList";
-import { getMyListings, updateListing } from "../api/listings";
+import { getMyListings, updateListing, deleteListing } from "../api/listings";
 import AsyncState from "../components/organisms/AsyncState";
 import StatusBadge from "../components/molecules/StatusBadge";
 import {
@@ -70,6 +70,25 @@ const CATEGORY_FIELD = {
 };
 export default function MyListingsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [successMessage, setSuccessMessage] = useState(
+    location.state?.successMessage || null
+  );
+
+  // Nettoie le message de l'historique de navigation : sans ça, il
+  // réapparaîtrait si l'utilisateur rafraîchit la page ou revient en
+  // arrière/avant avec le bouton du navigateur.
+  useEffect(() => {
+    if (!location.state?.successMessage) return;
+    navigate(location.pathname, { replace: true, state: {} });
+  }, [location.state, location.pathname, navigate]);
+
+  useEffect(() => {
+    if (!successMessage) return;
+    const timeoutId = setTimeout(() => setSuccessMessage(null), 5000);
+    return () => clearTimeout(timeoutId);
+  }, [successMessage]);
 
   const {
     items,
@@ -120,6 +139,20 @@ const [filters, setFilters] = useState({});
     setConfirmAction({ type: "close", listing });
   }
 
+  function requestDelete(listing) {
+    setConfirmAction({ type: "delete", listing });
+  }
+
+  async function handleDelete(id) {
+    setPendingId(id);
+    try {
+      await deleteListing(id);
+      await refetch();
+    } finally {
+      setPendingId(null);
+    }
+  }
+
   async function handleConfirm() {
     if (!confirmAction) return;
     const { type, listing } = confirmAction;
@@ -136,6 +169,8 @@ const [filters, setFilters] = useState({});
       await handleStatusChange(listing.id, "active");
     } else if (type === "close") {
       await handleStatusChange(listing.id, "closed");
+    } else if (type === "delete") {
+      await handleDelete(listing.id);
     }
 
     setConfirmAction(null);
@@ -164,6 +199,14 @@ const [filters, setFilters] = useState({});
       message:
         "Cette action rendra l'annonce clôturée. Elle ne sera plus affichée comme active.",
       confirmLabel: "Oui, clôturer",
+      confirmColor: "#dc2626",
+    },
+    delete: {
+      icon: "🗑️",
+      title: "Supprimer définitivement l'annonce ?",
+      message:
+        "Cette action est irréversible : l'annonce et ses pièces jointes seront définitivement supprimées.",
+      confirmLabel: "Oui, supprimer",
       confirmColor: "#dc2626",
     },
   };
@@ -244,6 +287,25 @@ const filteredItems = items.filter(
       </button>
     </Link>
   </div>
+
+  {successMessage && (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        padding: "14px 18px",
+        borderRadius: "14px",
+        backgroundColor: "#f0fdf4",
+        border: "1px solid #bbf7d0",
+        color: "#16a34a",
+        fontWeight: 600,
+        marginBottom: spacing.lg,
+      }}
+    >
+      ✅ {successMessage}
+    </div>
+  )}
 
   {/* <div
     style={{
@@ -420,6 +482,23 @@ const filteredItems = items.filter(
                         }
                       >
                         Clôturer
+                      </ActionButton>
+                    )}
+
+                    {listing.status ===
+                      "closed" && (
+                      <ActionButton
+                        variant="danger"
+                        disabled={
+                          isPending
+                        }
+                        onClick={() =>
+                          requestDelete(
+                            listing
+                          )
+                        }
+                      >
+                        Supprimer
                       </ActionButton>
                     )}
                   </div>

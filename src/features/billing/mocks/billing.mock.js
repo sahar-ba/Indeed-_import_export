@@ -11,18 +11,24 @@ export const mockUsage = {
 };
 
 // Abonnement de l'utilisateur actuellement connecté.
-// Démarre en plan Gratuit, comme tout nouvel utilisateur — c'est le seul
-// état de départ réaliste (personne ne commence directement Premium).
+// Historique cohérent avec les factures ci-dessous : Premium de mars à juin,
+// puis repassage au plan Gratuit le 1er juillet (d'où l'absence de facture
+// Premium ce mois-ci, et le compteur de messages qui repart de 0).
 export const mockSubscription = {
   planId: "free",
   planTitle: "🎁 Gratuit",
   price: "0 €",
   status: "active", // active | canceled | pending
-  startedAt: "2026-02-01",
+  // true = l'utilisateur a résilié, mais garde l'accès payant jusqu'à la
+  // fin de la période déjà réglée (comme Stripe/Netflix/etc.) ; le retour
+  // au plan Gratuit se fait automatiquement au renouvellement, pas tout de
+  // suite (voir resolveBillingCycle dans api/billing.js).
+  cancelAtPeriodEnd: false,
+  startedAt: "2026-07-01",
   renewalDate: "2026-08-01",
   billingCycle: "Mensuel",
   defaultPaymentMethodId: "pm-1",
-  usedPlanIds: ["free"], // Plans déjà utilisés — ne peuvent pas être choisis à nouveau
+  usedPlanIds: ["free", "premium"], // Plans déjà utilisés — ne peuvent pas être choisis à nouveau
 };
 
 // Moyens de paiement enregistrés par l'utilisateur.
@@ -58,12 +64,12 @@ export const mockInvoices = [
   {
     id: "INV-005",
     date: "2026-07-01",
-    amount: "29 €",
+    amount: "0 €",
     status: "paid",
-    planId: "premium",
-    planTitle: "Premium",
-    method: "Visa •••• 4242",
-    description: "Abonnement Premium — Juillet 2026",
+    planId: "free",
+    planTitle: "Gratuit",
+    method: "—",
+    description: "Passage au plan Gratuit (fin de l'abonnement Premium)",
   },
   {
     id: "INV-004",

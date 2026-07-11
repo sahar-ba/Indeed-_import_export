@@ -85,6 +85,31 @@ export async function updateListing(id, payload) {
   return mockListings[index];
 }
 
+/**
+ * DELETE /listings/:id — suppression définitive.
+ * Implémentation explicite (plutôt que le simple alias `listingsApi.remove`)
+ * car le client générique ne connaît pas notre tableau `mockListings` : sans
+ * ça, l'annonce "supprimée" resterait visible après un refetch en mode mock.
+ */
+export async function deleteListing(id) {
+  if (USE_MOCKS) {
+    await delay(300);
+    const index = mockListings.findIndex((l) => l.id === id);
+    if (index === -1) throw new Error("Annonce introuvable");
+    mockListings.splice(index, 1);
+    return { success: true };
+  }
+
+  try {
+    await apiClient.delete(`/listings/${id}`);
+    return { success: true };
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Impossible de supprimer cette annonce pour le moment."
+    );
+  }
+}
+
 // Toutes les annonces du propriétaire, quel que soit leur statut
 // (contrairement au catalogue public qui masque suspendues/clôturées).
 export async function getMyListings() {

@@ -405,8 +405,11 @@ const isMyListing =
                 </div>
               )}
 
-              {/* CONTACT */}
+              {/* CONTACT — masqué en intégralité si c'est ma propre annonce :
+                  "Contacter le propriétaire" n'a pas de sens pour son propre
+                  bien, et "Modifier" est déjà accessible depuis "Mes annonces". */}
 
+              {!isMyListing && (
               <div
                 style={{
                   background: "#ffffff",
@@ -439,7 +442,7 @@ const isMyListing =
                   plus d'informations.
                 </p>
 
-                {!isMyListing && (isOwnerAccountLoading || ownerAccount) && (
+                {(isOwnerAccountLoading || ownerAccount) && (
                   <div
                     style={{
                       display: "flex",
@@ -551,99 +554,74 @@ const isMyListing =
     flexWrap: "wrap",
   }}
 >
-  {isMyListing ? (
-    <>
-      <button
-        onClick={() =>
-          navigate(
-            `/listings/${listing.id}/edit`
-          )
-        }
-        style={{
-          padding: "14px 24px",
-          border: "none",
-          borderRadius: "12px",
-          background: "#4f46e5",
-          color: "#fff",
-          fontWeight: "600",
-          cursor: "pointer",
-        }}
-      >
-        ✏️ Modifier l'annonce
-      </button>
-    </>
-  ) : (
-    <>
-      <button
-        onClick={handleContact}
-        disabled={isContactingLoading}
-        style={{
-          padding: "14px 24px",
-          border: "none",
-          borderRadius: "12px",
-          background: "#4f46e5",
-          color: "white",
-          fontWeight: "600",
-          cursor: isContactingLoading
-            ? "not-allowed"
-            : "pointer",
-          opacity:
-            isContactingLoading
-              ? 0.7
-              : 1,
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-        }}
-      >
-        {isContactingLoading
-          ? "⏳ Connexion..."
-          : "📩 Contacter le vendeur"}
-      </button>
+  <button
+    onClick={handleContact}
+    disabled={isContactingLoading}
+    style={{
+      padding: "14px 24px",
+      border: "none",
+      borderRadius: "12px",
+      background: "#4f46e5",
+      color: "white",
+      fontWeight: "600",
+      cursor: isContactingLoading
+        ? "not-allowed"
+        : "pointer",
+      opacity:
+        isContactingLoading
+          ? 0.7
+          : 1,
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+    }}
+  >
+    {isContactingLoading
+      ? "⏳ Connexion..."
+      : "📩 Contacter le vendeur"}
+  </button>
 
-      <button
-        onClick={handleToggleFavorite}
-        disabled={isFavoriteLoading}
-        style={{
-          padding: "14px 24px",
-          border: `1px solid ${
-            isFavorite
-              ? "#dc2626"
-              : "#e2e8f0"
-          }`,
-          borderRadius: "12px",
-          background: isFavorite
-            ? "#fef2f2"
-            : "#ffffff",
-          color: isFavorite
-            ? "#dc2626"
-            : "#0f172a",
-          fontWeight: "600",
-          cursor:
-            isFavoriteLoading
-              ? "not-allowed"
-              : "pointer",
-          opacity:
-            isFavoriteLoading
-              ? 0.7
-              : 1,
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-        }}
-      >
-        {isFavorite ? (
-          <FaHeart />
-        ) : (
-          <FaRegHeart />
-        )}
+  <button
+    onClick={handleToggleFavorite}
+    disabled={isFavoriteLoading}
+    style={{
+      padding: "14px 24px",
+      border: `1px solid ${
+        isFavorite
+          ? "#dc2626"
+          : "#e2e8f0"
+      }`,
+      borderRadius: "12px",
+      background: isFavorite
+        ? "#fef2f2"
+        : "#ffffff",
+      color: isFavorite
+        ? "#dc2626"
+        : "#0f172a",
+      fontWeight: "600",
+      cursor:
+        isFavoriteLoading
+          ? "not-allowed"
+          : "pointer",
+      opacity:
+        isFavoriteLoading
+          ? 0.7
+          : 1,
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+    }}
+  >
+    {isFavorite ? (
+      <FaHeart />
+    ) : (
+      <FaRegHeart />
+    )}
 
-        {isFavorite
-          ? "Retirer des favoris"
-          : "Ajouter aux favoris"}
-      </button>
-    </>
-  )}
+    {isFavorite
+      ? "Retirer des favoris"
+      : "Ajouter aux favoris"}
+  </button>
 </div>
 
                 {favoriteError && (
@@ -658,6 +636,7 @@ const isMyListing =
                   </p>
                 )}
               </div>
+              )}
             </>
           )}
         </AsyncState>

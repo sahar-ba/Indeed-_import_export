@@ -63,7 +63,7 @@ export default function BillingPage() {
       {user && (
         <AsyncState isLoading={isLoading} error={error}>
           <SmartRecommendationBanner recommendation={recommendation} />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: spacing.md, marginBottom: spacing.lg }}>
+          <div className="grid-2-col" style={{ gap: spacing.md, marginBottom: spacing.lg }}>
             {usage && <UsageCard usage={usage} />}
             {subscription && <CurrentPlanCard subscription={subscription} />}
           </div>
@@ -72,9 +72,8 @@ export default function BillingPage() {
 
       <SectionCard title="Nos offres">
         <div
+          className="grid-3-col"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
             gap: spacing.lg,
             alignItems: "stretch",
           }}

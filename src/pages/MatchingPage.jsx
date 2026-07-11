@@ -41,12 +41,13 @@ export default function MatchingPage() {
   const navigate = useNavigate();
 
   // useResourceList appelle getMatches(filters) à chaque changement de
-  // filtres -> GET /matches?minScore=... côté vraie API.
+  // filtres -> GET /matching-results?minScore=... côté vraie API.
   const { items: matches, filters, setFilters, isLoading, error } =
     useResourceList(getMatches, {});
 
   const [contactingId, setContactingId] = useState(null);
   const [contactError, setContactError] = useState(null);
+  const [selectedMatch, setSelectedMatch] = useState(null);
 
   async function handleContact(match) {
     setContactingId(match.id);
@@ -317,33 +318,244 @@ export default function MatchingPage() {
                   })}
                 </div>
 
-                {/* ACTION : contacter cette correspondance */}
-                <button
-                  onClick={() => handleContact(match)}
-                  disabled={isContacting}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "10px 18px",
-                    border: "none",
-                    borderRadius: radius.sm,
-                    backgroundColor: colors.primary,
-                    color: "#fff",
-                    fontWeight: 600,
-                    fontSize: typography.fontSizeSm,
-                    cursor: isContacting ? "not-allowed" : "pointer",
-                    opacity: isContacting ? 0.7 : 1,
-                  }}
-                >
-                  <FaCommentDots />
-                  {isContacting ? "Connexion..." : "Contacter"}
-                </button>
+                {/* ACTIONS : voir le détail complet / contacter cette correspondance */}
+                <div style={{ display: "flex", gap: spacing.sm, flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => setSelectedMatch(match)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "10px 18px",
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: radius.sm,
+                      backgroundColor: "#fff",
+                      color: colors.textPrimary,
+                      fontWeight: 600,
+                      fontSize: typography.fontSizeSm,
+                      cursor: "pointer",
+                    }}
+                  >
+                    🔍 Voir le détail
+                  </button>
+
+                  <button
+                    onClick={() => handleContact(match)}
+                    disabled={isContacting}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "10px 18px",
+                      border: "none",
+                      borderRadius: radius.sm,
+                      backgroundColor: colors.primary,
+                      color: "#fff",
+                      fontWeight: 600,
+                      fontSize: typography.fontSizeSm,
+                      cursor: isContacting ? "not-allowed" : "pointer",
+                      opacity: isContacting ? 0.7 : 1,
+                    }}
+                  >
+                    <FaCommentDots />
+                    {isContacting ? "Connexion..." : "Contacter"}
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
       </AsyncState>
+
+      {/* MODAL DÉTAIL : explication complète du match */}
+      {selectedMatch && (
+        <div
+          onClick={() => setSelectedMatch(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.4)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            padding: spacing.md,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff",
+              width: "560px",
+              maxWidth: "100%",
+              maxHeight: "85vh",
+              overflowY: "auto",
+              borderRadius: "20px",
+              padding: spacing.xl,
+              boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                gap: spacing.md,
+                marginBottom: spacing.md,
+              }}
+            >
+              <div>
+                <h3 style={{ margin: 0, fontSize: typography.fontSizeLg }}>
+                  {selectedMatch.counterpart?.name || "Entreprise partenaire"}
+                </h3>
+                <p style={{ margin: "4px 0 0", color: colors.textMuted, fontSize: typography.fontSizeBase }}>
+                  {selectedMatch.counterpart?.country && (
+                    <>🌍 {selectedMatch.counterpart.country} · </>
+                  )}
+                  Correspond à votre annonce «{" "}
+                  {selectedMatch.listing?.product || "Annonce"} »
+                </p>
+              </div>
+
+              <button
+                onClick={() => setSelectedMatch(null)}
+                aria-label="Fermer"
+                style={{
+                  border: "none",
+                  background: "none",
+                  fontSize: 20,
+                  lineHeight: 1,
+                  cursor: "pointer",
+                  color: colors.textMuted,
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Score */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: spacing.md,
+                marginBottom: spacing.lg,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "32px",
+                  fontWeight: 800,
+                  color: scoreColor(selectedMatch.matchScore),
+                }}
+              >
+                {selectedMatch.matchScore}%
+              </span>
+              <div style={{ flex: 1 }}>
+                <p style={{ margin: "0 0 6px", fontSize: 13, color: colors.textMuted }}>
+                  Score de pertinence global
+                </p>
+                <div
+                  style={{
+                    height: "8px",
+                    borderRadius: "999px",
+                    backgroundColor: colors.neutralBg,
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${selectedMatch.matchScore}%`,
+                      height: "100%",
+                      backgroundColor: scoreColor(selectedMatch.matchScore),
+                      borderRadius: "999px",
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Explication complète, critère par critère */}
+            <div style={{ display: "flex", flexDirection: "column", gap: spacing.sm, marginBottom: spacing.xl }}>
+              {Object.entries(REASON_META).map(([key, meta]) => {
+                const reasonText = selectedMatch.reasons?.[key];
+                if (!reasonText) return null;
+
+                return (
+                  <div
+                    key={key}
+                    style={{
+                      display: "flex",
+                      gap: 12,
+                      padding: spacing.md,
+                      backgroundColor: colors.surface,
+                      borderRadius: radius.sm,
+                    }}
+                  >
+                    <div style={{ color: colors.primary, fontSize: 18, marginTop: 2 }}>
+                      {meta.icon}
+                    </div>
+                    <div>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: colors.textMuted,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.4px",
+                        }}
+                      >
+                        {meta.label}
+                      </p>
+                      <p style={{ margin: "2px 0 0", fontSize: 14, color: colors.textPrimary }}>
+                        {reasonText}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: spacing.sm }}>
+              <button
+                onClick={() => setSelectedMatch(null)}
+                style={{
+                  padding: "10px 18px",
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: radius.sm,
+                  background: "#fff",
+                  color: colors.textPrimary,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                Fermer
+              </button>
+              <button
+                onClick={() => handleContact(selectedMatch)}
+                disabled={contactingId === selectedMatch.id}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "10px 18px",
+                  border: "none",
+                  borderRadius: radius.sm,
+                  backgroundColor: colors.primary,
+                  color: "#fff",
+                  fontWeight: 600,
+                  cursor: contactingId === selectedMatch.id ? "not-allowed" : "pointer",
+                  opacity: contactingId === selectedMatch.id ? 0.7 : 1,
+                }}
+              >
+                <FaCommentDots />
+                {contactingId === selectedMatch.id ? "Connexion..." : "Contacter"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

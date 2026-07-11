@@ -17,7 +17,7 @@ export default function OnboardingListingPage() {
       </p>
       <div style={{ display: "flex", gap: 12 }}>
         <Button onClick={() => navigate("/listings/create")}>Créer une annonce</Button>
-        <Button variant="secondary" onClick={() => navigate("/listings")}>
+        <Button variant="secondary" onClick={() => navigate("/listings/catalog")}>
           Ignorer pour l'instant
         </Button>
       </div>

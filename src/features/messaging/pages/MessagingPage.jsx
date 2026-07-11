@@ -10,6 +10,10 @@ import {
   CURRENT_USER_ID,
 } from "../api/messages";
 import { checkPaywallStatus } from "../../billing/api/billing";
+import {
+  isAcceptedFile,
+  MAX_FILE_SIZE_BYTES,
+} from "../../../components/molecules/FileDropzone";
 import StatusBadge from "../../../components/molecules/StatusBadge";
 import AsyncState from "../../../components/organisms/AsyncState";
 
@@ -44,7 +48,7 @@ export default function MessagingPage() {
   const selected = sorted.find((c) => c.id === id) || null;
 
   return (
-    <>
+    <div className="messaging-shell" data-has-selection={selected ? "true" : "false"}>
       {/* Liste des conversations - Sidebar gauche */}
       <div
         style={{
@@ -149,10 +153,12 @@ export default function MessagingPage() {
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
+                        marginBottom: 6,
                       }}
                     >
                       {lastMessage ? lastMessage.text : "Aucun message"}
                     </p>
+                    <StatusBadge status={conv.status} />
                   </div>
                 </button>
               );
@@ -188,21 +194,33 @@ export default function MessagingPage() {
           <ConversationThread key={selected.id} conversation={selected} onRefetch={refetch} />
         )}
       </div>
-    </>
+    </div>
   );
 }
 
 function ConversationThread({ conversation, onRefetch }) {
+  const navigate = useNavigate();
   const [text, setText] = useState("");
   const [attachment, setAttachment] = useState(null);
+  const [attachmentError, setAttachmentError] = useState(null);
   const [isSending, setIsSending] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
+  const [usage, setUsage] = useState(null);
+  const [isUnlimited, setIsUnlimited] = useState(true);
   const [sendError, setSendError] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    checkPaywallStatus().then(({ isBlocked }) => setIsBlocked(isBlocked));
+    refreshPaywallStatus();
   }, [conversation.id]);
+
+  function refreshPaywallStatus() {
+    checkPaywallStatus().then(({ isBlocked, usage, isUnlimited }) => {
+      setIsBlocked(isBlocked);
+      setUsage(usage);
+      setIsUnlimited(isUnlimited);
+    });
+  }
 
   async function handleSend(e) {
     e.preventDefault();
@@ -213,7 +231,9 @@ function ConversationThread({ conversation, onRefetch }) {
       await sendMessage(conversation.id, text.trim(), attachment);
       setText("");
       setAttachment(null);
+      setAttachmentError(null);
       await onRefetch();
+      refreshPaywallStatus();
     } catch (err) {
       setSendError(err.message);
       setIsBlocked(true);
@@ -244,6 +264,22 @@ function ConversationThread({ conversation, onRefetch }) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+          <button
+            type="button"
+            className="mobile-back-button"
+            onClick={() => navigate("/messages")}
+            aria-label="Retour à la liste des conversations"
+            style={{
+              border: "none",
+              background: "none",
+              cursor: "pointer",
+              color: "#4f46e5",
+              padding: 4,
+              flexShrink: 0,
+            }}
+          >
+            <ArrowLeft size={20} />
+          </button>
           <div>
             <p style={{ margin: 0, fontWeight: 700, color: "#111827", display: "flex", alignItems: "center", gap: 8 }}>
               {conversation.counterpart.name}
@@ -276,9 +312,10 @@ function ConversationThread({ conversation, onRefetch }) {
 
         {/* Contrôle du statut de mise en relation */}
         <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
-          {conversation.status === "rejected" || conversation.status === "concluded" ? (
-            <StatusBadge status={conversation.status} />
-          ) : (
+          {/* Le statut actuel est toujours visible, terminal ou pas */}
+          <StatusBadge status={conversation.status} />
+
+          {conversation.status !== "rejected" && conversation.status !== "concluded" && (
             <>
               {currentStepIndex >= 0 && currentStepIndex < STATUS_FLOW.length - 1 && (
                 <button
@@ -326,55 +363,81 @@ function ConversationThread({ conversation, onRefetch }) {
         )}
         {conversation.messages.map((msg) => {
           const isMine = msg.senderId === CURRENT_USER_ID;
+          const avatarName = isMine ? "Moi" : conversation.counterpart.name;
           return (
             <div
               key={msg.id}
               style={{
+                display: "flex",
+                flexDirection: isMine ? "row-reverse" : "row",
+                alignItems: "flex-end",
+                gap: 8,
                 alignSelf: isMine ? "flex-end" : "flex-start",
                 maxWidth: "70%",
               }}
             >
               <div
+                title={avatarName}
                 style={{
-                  padding: "10px 14px",
-                  borderRadius: 16,
-                  borderBottomRightRadius: isMine ? 4 : 16,
-                  borderBottomLeftRadius: isMine ? 16 : 4,
-                  backgroundColor: isMine ? "#4f46e5" : "#f3f4f6",
-                  color: isMine ? "#fff" : "#111827",
-                  fontSize: 14,
-                  lineHeight: 1.4,
-                }}
-              >
-                {msg.text}
-                {msg.attachment && (
-                  <div
-                    style={{
-                      marginTop: 8,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      padding: "6px 10px",
-                      borderRadius: 10,
-                      backgroundColor: isMine ? "rgba(255,255,255,0.15)" : "#e5e7eb",
-                      fontSize: 12,
-                    }}
-                  >
-                    <Paperclip size={13} />
-                    {msg.attachment.name}
-                  </div>
-                )}
-              </div>
-              <p
-                style={{
-                  margin: "4px 4px 0",
+                  width: 28,
+                  height: 28,
+                  borderRadius: "50%",
+                  backgroundColor: isMine ? "#4f46e5" : "#c7d2fe",
+                  color: isMine ? "#fff" : "#3730a3",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 700,
                   fontSize: 11,
-                  color: "#9ca3af",
-                  textAlign: isMine ? "right" : "left",
+                  flexShrink: 0,
                 }}
               >
-                {formatTime(msg.sentAt)}
-              </p>
+                {initials(avatarName)}
+              </div>
+
+              <div>
+                <div
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: 16,
+                    borderBottomRightRadius: isMine ? 4 : 16,
+                    borderBottomLeftRadius: isMine ? 16 : 4,
+                    backgroundColor: isMine ? "#4f46e5" : "#f3f4f6",
+                    color: isMine ? "#fff" : "#111827",
+                    fontSize: 14,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {msg.text}
+                  {msg.attachment && (
+                    <div
+                      style={{
+                        marginTop: 8,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "6px 10px",
+                        borderRadius: 10,
+                        backgroundColor: isMine ? "rgba(255,255,255,0.15)" : "#e5e7eb",
+                        fontSize: 12,
+                      }}
+                    >
+                      <Paperclip size={13} />
+                      {msg.attachment.name}
+                    </div>
+                  )}
+                </div>
+                <p
+                  style={{
+                    margin: "4px 4px 0",
+                    fontSize: 11,
+                    color: "#9ca3af",
+                    textAlign: isMine ? "right" : "left",
+                  }}
+                >
+                  {formatTime(msg.sentAt)}
+                </p>
+              </div>
             </div>
           );
         })}
@@ -425,6 +488,43 @@ function ConversationThread({ conversation, onRefetch }) {
           </Link>
         </div>
       ) : (
+      <>
+        {!isUnlimited && usage && (
+          <div
+            style={{
+              padding: "8px 20px",
+              borderTop: "1px solid #f1f5f9",
+              backgroundColor: usage.maxChats - usage.usedChats <= 10 ? "#fffbeb" : "#f8fafc",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+              flexWrap: "wrap",
+            }}
+          >
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: usage.maxChats - usage.usedChats <= 10 ? "#92400e" : "#6b7280",
+              }}
+            >
+              {usage.maxChats - usage.usedChats <= 10 ? "⚠️ " : "💬 "}
+              {Math.max(0, usage.maxChats - usage.usedChats)} message
+              {Math.max(0, usage.maxChats - usage.usedChats) > 1 ? "s" : ""} gratuit
+              {Math.max(0, usage.maxChats - usage.usedChats) > 1 ? "s" : ""} restant
+              {Math.max(0, usage.maxChats - usage.usedChats) > 1 ? "s" : ""} ce mois-ci
+            </span>
+            {usage.maxChats - usage.usedChats <= 10 && (
+              <Link
+                to="/billing/plans"
+                style={{ fontSize: 12, fontWeight: 700, color: "#4f46e5" }}
+              >
+                Voir les offres →
+              </Link>
+            )}
+          </div>
+        )}
       <form
         onSubmit={handleSend}
         style={{
@@ -435,6 +535,9 @@ function ConversationThread({ conversation, onRefetch }) {
           gap: 8,
         }}
       >
+        {attachmentError && (
+          <p style={{ color: "#dc2626", fontSize: 12, margin: 0 }}>⚠️ {attachmentError}</p>
+        )}
         {attachment && (
           <div
             style={{
@@ -453,7 +556,10 @@ function ConversationThread({ conversation, onRefetch }) {
             {attachment.name}
             <button
               type="button"
-              onClick={() => setAttachment(null)}
+              onClick={() => {
+                setAttachment(null);
+                setAttachmentError(null);
+              }}
               style={{ border: "none", background: "none", cursor: "pointer", color: "#4f46e5", fontWeight: 700 }}
             >
               ×
@@ -484,7 +590,22 @@ function ConversationThread({ conversation, onRefetch }) {
             ref={fileInputRef}
             type="file"
             hidden
-            onChange={(e) => e.target.files?.[0] && setAttachment({ name: e.target.files[0].name })}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              if (!isAcceptedFile(file)) {
+                setAttachmentError("Type de fichier non autorisé (PDF ou image uniquement).");
+                e.target.value = "";
+                return;
+              }
+              if (file.size > MAX_FILE_SIZE_BYTES) {
+                setAttachmentError("Fichier trop volumineux (10 Mo maximum).");
+                e.target.value = "";
+                return;
+              }
+              setAttachmentError(null);
+              setAttachment({ name: file.name, size: file.size, file });
+            }}
           />
           <input
             value={text}
@@ -521,6 +642,7 @@ function ConversationThread({ conversation, onRefetch }) {
           </button>
         </div>
       </form>
+      </>
       )}
     </>
   );

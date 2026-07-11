@@ -1,4 +1,5 @@
 import { createResourceApi } from "../../../api/createResourceApi";
+import apiClient, { USE_MOCKS } from "../../../api/client";
 import { delay } from "../../../utils/delay";
 import { mockConversations } from "../mocks/messages.mock";
 // Couplage volontaire avec le module Facturation : chaque message envoyé
@@ -10,9 +11,16 @@ const CURRENT_USER_ID = "user_42";
 
 const conversationsApi = createResourceApi("conversations", mockConversations);
 
+// GET /conversations — historique des conversations de l'utilisateur
 export const getConversations = conversationsApi.getAll;
+// GET /conversations/:id — fil de discussion d'une conversation
 export const getConversationById = conversationsApi.getById;
 
+/**
+ * POST /conversations/:id/messages — envoie un message dans une conversation.
+ * Contrat attendu du backend réel : renvoie le message créé (même forme
+ * que les objets `messages[]` déjà présents dans une conversation).
+ */
 export async function sendMessage(conversationId, text, attachment) {
   const { isBlocked } = await checkPaywallStatus();
   if (isBlocked) {
@@ -21,24 +29,53 @@ export async function sendMessage(conversationId, text, attachment) {
     );
   }
 
-  await delay(300);
-  const conversation = mockConversations.find((c) => c.id === conversationId);
-  if (!conversation) throw new Error("Conversation introuvable");
+  if (USE_MOCKS) {
+    await delay(300);
+    const conversation = mockConversations.find((c) => c.id === conversationId);
+    if (!conversation) throw new Error("Conversation introuvable");
 
-  const message = {
-    id: `m-${Date.now()}`,
-    senderId: CURRENT_USER_ID,
-    text,
-    sentAt: new Date().toISOString(),
-    ...(attachment ? { attachment } : {}),
-  };
+    const message = {
+      id: `m-${Date.now()}`,
+      senderId: CURRENT_USER_ID,
+      text,
+      sentAt: new Date().toISOString(),
+      ...(attachment ? { attachment } : {}),
+    };
 
-  conversation.messages.push(message);
-  conversation.updatedAt = message.sentAt;
+    conversation.messages.push(message);
+    conversation.updatedAt = message.sentAt;
 
-  await incrementUsage();
+    await incrementUsage();
+    return message;
+  }
 
-  return message;
+  // Envoi réel : si une pièce jointe est présente, on passe par
+  // multipart/form-data (nécessaire pour envoyer un fichier binaire).
+  let payload;
+  let headers;
+  if (attachment?.file) {
+    const formData = new FormData();
+    formData.append("text", text);
+    formData.append("file", attachment.file);
+    payload = formData;
+    headers = { "Content-Type": "multipart/form-data" };
+  } else {
+    payload = { text };
+  }
+
+  try {
+    const { data } = await apiClient.post(
+      `/conversations/${conversationId}/messages`,
+      payload,
+      headers ? { headers } : undefined
+    );
+    await incrementUsage();
+    return data;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Impossible d'envoyer le message pour le moment."
+    );
+  }
 }
 
 export async function updateConversationStatus(conversationId, status) {

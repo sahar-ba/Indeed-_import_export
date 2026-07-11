@@ -3,7 +3,7 @@ import { delay } from "../utils/delay";
 import { mockMatches, mockListings } from "../mocks/listings.mock";
 
 /**
- * GET /matches — récupère les correspondances proposées par l'agent IA pour
+ * GET /matching-results — récupère les correspondances proposées par l'agent IA pour
  * les annonces de l'utilisateur courant, triées par score de pertinence
  * décroissant.
  *
@@ -33,6 +33,6 @@ export async function getMatches(params = {}) {
     return enriched.sort((a, b) => b.matchScore - a.matchScore);
   }
 
-  const { data } = await apiClient.get("/matches", { params });
+  const { data } = await apiClient.get("/matching-results", { params });
   return data;
 }

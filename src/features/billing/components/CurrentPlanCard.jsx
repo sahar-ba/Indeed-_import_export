@@ -28,13 +28,13 @@ export default function CurrentPlanCard({ subscription, compact }) {
           </p>
         </div>
 
-        <StatusBadge status={subscription.status === "active" ? "active" : "canceled"} />
+        <StatusBadge status={subscription.cancelAtPeriodEnd ? "canceled" : "active"} />
       </div>
 
       <p style={{ color: colors.textMuted, marginTop: spacing.md, marginBottom: 0 }}>
-        {subscription.status === "active"
-          ? `Prochain renouvellement le ${subscription.renewalDate}`
-          : "Abonnement résilié — actif jusqu'à la fin de la période en cours."}
+        {subscription.cancelAtPeriodEnd
+          ? `Résiliation programmée — vous gardez l'accès jusqu'au ${subscription.renewalDate}, puis retour au plan Gratuit.`
+          : `Prochain renouvellement le ${subscription.renewalDate}`}
       </p>
 
       {!compact && (

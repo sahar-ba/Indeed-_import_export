@@ -9,6 +9,7 @@ export default function RegisterPage() {
     handleSubmit,
     watch,
     setValue,
+    formState: { errors },
   } = useForm();
 
   // Alias pour éviter le conflit de nom avec `register` de react-hook-form
@@ -94,16 +95,34 @@ export default function RegisterPage() {
 
             <input
               type="email"
-              {...register("email")}
+              {...register("email", {
+                required: "Email requis",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Adresse email invalide",
+                },
+              })}
               placeholder="votre@email.com"
               style={{
                 width: "100%",
                 padding: "14px",
-                border: "1px solid #ddd",
+                border: `1px solid ${errors.email ? "#dc2626" : "#ddd"}`,
                 borderRadius: "12px",
                 fontSize: "15px",
               }}
             />
+
+            {errors.email && (
+              <p
+                style={{
+                  color: "#dc2626",
+                  marginTop: "5px",
+                  fontSize: "14px",
+                }}
+              >
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* Mot de passe */}
@@ -120,16 +139,34 @@ export default function RegisterPage() {
 
             <input
               type="password"
-              {...register("password")}
+              {...register("password", {
+                required: "Mot de passe requis",
+                minLength: {
+                  value: 8,
+                  message: "8 caractères minimum",
+                },
+              })}
               placeholder="********"
               style={{
                 width: "100%",
                 padding: "14px",
-                border: "1px solid #ddd",
+                border: `1px solid ${errors.password ? "#dc2626" : "#ddd"}`,
                 borderRadius: "12px",
                 fontSize: "15px",
               }}
             />
+
+            {errors.password && (
+              <p
+                style={{
+                  color: "#dc2626",
+                  marginTop: "5px",
+                  fontSize: "14px",
+                }}
+              >
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           {/* Rôle */}
@@ -143,7 +180,7 @@ export default function RegisterPage() {
           </h3>
 
           <div
-            onClick={() => setValue("role", "exporter")}
+            onClick={() => setValue("role", "exporter", { shouldValidate: true })}
             style={{
               border:
                 watch("role") === "exporter"
@@ -172,7 +209,7 @@ export default function RegisterPage() {
           </div>
 
           <div
-            onClick={() => setValue("role", "importer")}
+            onClick={() => setValue("role", "importer", { shouldValidate: true })}
             style={{
               border:
                 watch("role") === "importer"
@@ -181,7 +218,7 @@ export default function RegisterPage() {
               borderRadius: "16px",
               padding: "18px",
               cursor: "pointer",
-              marginBottom: "25px",
+              marginBottom: "12px",
               background:
                 watch("role") === "importer"
                   ? "#eef2ff"
@@ -199,6 +236,28 @@ export default function RegisterPage() {
               Je recherche des fournisseurs.
             </p>
           </div>
+
+          {/* Champ caché : c'est lui que react-hook-form valide, les
+              cartes ci-dessus ne font que le remplir via setValue. */}
+          <input
+            type="hidden"
+            {...register("role", {
+              required: "Sélectionnez un rôle pour continuer",
+            })}
+          />
+
+          {errors.role && (
+            <p
+              style={{
+                color: "#dc2626",
+                marginTop: "-4px",
+                marginBottom: "20px",
+                fontSize: "14px",
+              }}
+            >
+              {errors.role.message}
+            </p>
+          )}
 
           {submitError && (
             <div

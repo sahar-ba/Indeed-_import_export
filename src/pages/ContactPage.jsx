@@ -96,9 +96,8 @@ export default function ContactPage() {
 
         {/* Carte + formulaire */}
         <div
+          className="grid-2-col"
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
             gap: spacing.lg,
             alignItems: "stretch",
           }}
@@ -142,7 +141,7 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit(onSubmit)}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: spacing.md }}>
+                <div className="grid-2-col" style={{ gap: spacing.md }}>
                   <FormField
                     label=""
                     name="name"

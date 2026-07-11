@@ -66,9 +66,8 @@ export default function InvoiceDetailPage() {
             </div>
 
             <div
+              className="grid-2-col"
               style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
                 rowGap: spacing.md,
                 columnGap: spacing.lg,
                 padding: spacing.lg,

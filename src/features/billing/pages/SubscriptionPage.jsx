@@ -5,7 +5,7 @@ import SectionCard from "../../../components/molecules/SectionCard";
 import DetailCard from "../../../components/molecules/DetailCard";
 import Button from "../../../components/atoms/Button";
 import BillingSubNav from "../components/BillingSubNav";
-import { getSubscription, getPaymentMethods, cancelSubscription } from "../api/billing";
+import { getSubscription, getPaymentMethods, cancelSubscription, reactivateSubscription } from "../api/billing";
 import { colors, spacing, typography } from "../../../styles/tokens";
 
 export default function SubscriptionPage() {
@@ -43,6 +43,18 @@ export default function SubscriptionPage() {
     }
   }
 
+  async function handleReactivate() {
+    setIsCanceling(true);
+    try {
+      const updated = await reactivateSubscription();
+      setSubscription(updated);
+    } catch (err) {
+      setError(err.message || "Impossible d'annuler la résiliation");
+    } finally {
+      setIsCanceling(false);
+    }
+  }
+
   const defaultMethod = paymentMethods.find((m) => m.isDefault);
 
   return (
@@ -70,13 +82,13 @@ export default function SubscriptionPage() {
               <DetailCard
                 icon="💳"
                 title="Statut"
-                value={subscription.status === "active" ? "Actif" : "Résilié"}
+                value={subscription.cancelAtPeriodEnd ? "Résiliation programmée" : "Actif"}
               />
               <DetailCard icon="💶" title="Tarif" value={subscription.price} />
               <DetailCard
                 icon="📅"
-                title="Prochain renouvellement"
-                value={subscription.status === "active" ? subscription.renewalDate : "—"}
+                title={subscription.cancelAtPeriodEnd ? "Retour au Gratuit le" : "Prochain renouvellement"}
+                value={subscription.renewalDate}
               />
               <DetailCard
                 icon="🏦"
@@ -91,13 +103,35 @@ export default function SubscriptionPage() {
               />
             </div>
 
+            {subscription.cancelAtPeriodEnd && (
+              <div
+                style={{
+                  marginBottom: spacing.md,
+                  padding: spacing.md,
+                  backgroundColor: colors.dangerBg,
+                  borderRadius: 12,
+                }}
+              >
+                <p style={{ margin: 0, color: colors.danger, fontWeight: 600 }}>
+                  Résiliation programmée : vous gardez l'accès {subscription.planTitle} jusqu'au{" "}
+                  {subscription.renewalDate}, puis votre compte repassera automatiquement au plan
+                  Gratuit.
+                </p>
+                <div style={{ marginTop: spacing.sm }}>
+                  <Button variant="secondary" onClick={handleReactivate} disabled={isCanceling}>
+                    {isCanceling ? "..." : "Annuler la résiliation"}
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <div style={{ display: "flex", gap: spacing.sm, flexWrap: "wrap" }}>
 
               <Link to="/billing/payment-methods">
                 <Button variant="secondary">Gérer mes moyens de paiement</Button>
               </Link>
 
-              {subscription.status === "active" && !confirmingCancel && (
+              {subscription.planId !== "free" && !subscription.cancelAtPeriodEnd && !confirmingCancel && (
                 <Button variant="danger" onClick={() => setConfirmingCancel(true)}>
                   Résilier l'abonnement
                 </Button>
@@ -114,7 +148,7 @@ export default function SubscriptionPage() {
                 }}
               >
                 <p style={{ margin: 0, color: colors.danger, fontWeight: 600 }}>
-                  Confirmer la résiliation ? Vous garderez l'accès Premium jusqu'au{" "}
+                  Confirmer la résiliation ? Vous garderez l'accès {subscription.planTitle} jusqu'au{" "}
                   {subscription.renewalDate}, puis votre compte repassera au plan Gratuit.
                 </p>
                 <div style={{ display: "flex", gap: spacing.sm, marginTop: spacing.sm }}>
@@ -128,9 +162,9 @@ export default function SubscriptionPage() {
               </div>
             )}
 
-            {subscription.status !== "active" && (
+            {subscription.planId === "free" && (
               <div style={{ marginTop: spacing.md }}>
-                <Button onClick={() => navigate("/billing/plans")}>Réactiver un abonnement</Button>
+                <Button onClick={() => navigate("/billing/plans")}>Voir les offres</Button>
               </div>
             )}
           </SectionCard>

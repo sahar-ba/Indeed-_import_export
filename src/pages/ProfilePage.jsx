@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import StatusBadge from "../components/molecules/StatusBadge";
 
 const COUNTRY_OPTIONS = [
   "Tunisie",
@@ -91,10 +92,8 @@ export default function ProfilePage() {
       </div>
 
       <div
+        className="grid-sidebar"
         style={{
-          display: "grid",
-          gridTemplateColumns:
-            "280px 1fr",
           gap: "24px",
         }}
       >
@@ -145,15 +144,23 @@ export default function ProfilePage() {
               {accountInfo.role}
             </p>
 
-            <div
+            <div style={{ marginTop: "8px" }}>
+              <StatusBadge status={user?.profileStatus || "pending"} />
+            </div>
+
+            <Link
+              to="/profile/status"
               style={{
-                color: "#16a34a",
+                display: "inline-block",
+                marginTop: "10px",
+                fontSize: "13px",
+                color: "#4f46e5",
+                textDecoration: "none",
                 fontWeight: 600,
-                marginTop: "8px",
               }}
             >
-              ✅ Profil validé
-            </div>
+              Voir le détail du statut →
+            </Link>
           </div>
 
           
@@ -407,10 +414,8 @@ function FormRow({
 }) {
   return (
     <div
+      className="grid-2-col"
       style={{
-        display: "grid",
-        gridTemplateColumns:
-          "1fr 1fr",
         gap: "16px",
       }}
     >

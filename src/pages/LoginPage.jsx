@@ -98,6 +98,10 @@ export default function LoginPage() {
               type="email"
               {...register("email", {
                 required: "Email requis",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Adresse email invalide",
+                },
               })}
               placeholder="votre@email.com"
               style={{

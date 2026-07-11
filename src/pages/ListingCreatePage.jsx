@@ -80,11 +80,56 @@ export default function ListingCreatePage() {
   const [attachments, setAttachments] = useState([]);
   const [isLoadingListing, setIsLoadingListing] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
   const [formDataToSubmit, setFormDataToSubmit] = useState(null);
   const { id } = useParams();
   const isEditMode = Boolean(id);
   const navigate = useNavigate();
+
+  // Champs Select requis mais non gérés par react-hook-form (ce sont des
+  // composants contrôlés via watch/setValue, pas des inputs "register()").
+  // On calcule leurs erreurs manuellement, seulement après une tentative
+  // de soumission, pour un comportement cohérent avec les FormField.
+  const watchedValues = watch();
+  const selectErrors = attemptedSubmit
+    ? {
+        type: !watchedValues.type ? "Type d'annonce requis" : null,
+        category: !watchedValues.category ? "Catégorie requise" : null,
+        quantityUnit: !watchedValues.quantityUnit ? "Unité requise" : null,
+        currency: !watchedValues.currency ? "Devise requise" : null,
+        incoterm: !watchedValues.incoterm ? "Incoterm requis" : null,
+        country: !watchedValues.country ? "Pays requis" : null,
+      }
+    : {};
+
+  // Vérifie que chaque document a un titre + un type, et que si des
+  // certifications sont déclarées, au moins un document de type
+  // "certificate" est bien attaché en preuve.
+  function validateAttachments(data, files) {
+    const incompleteFile = files.some(
+      (file) => !file.label?.trim() || !file.type
+    );
+    if (incompleteFile) {
+      return "Chaque document ajouté doit avoir un titre et un type renseignés.";
+    }
+
+    const declaredCertifications = (data.certifications || "")
+      .split(",")
+      .map((c) => c.trim())
+      .filter(Boolean);
+
+    if (declaredCertifications.length > 0) {
+      const hasCertificateDocument = files.some(
+        (file) => file.type === "certificate"
+      );
+      if (!hasCertificateDocument) {
+        return "Vous avez déclaré des certifications : merci de joindre au moins un document justificatif de type « Certification ».";
+      }
+    }
+
+    return null;
+  }
 
   // En mode édition, on charge l'annonce existante et on préremplit le formulaire
   useEffect(() => {
@@ -112,25 +157,26 @@ export default function ListingCreatePage() {
 
 async function onSubmit(data) {
   setSubmitError(null);
+  setAttemptedSubmit(true);
 
-  if (!data.quantityUnit) {
+  const missingSelectFields =
+    !data.type ||
+    !data.category ||
+    !data.quantityUnit ||
+    !data.incoterm ||
+    !data.currency ||
+    !data.country;
+
+  if (missingSelectFields) {
     setSubmitError(
-      "Veuillez sélectionner une unité."
+      "Merci de compléter tous les champs requis (indiqués en rouge ci-dessus)."
     );
     return;
   }
 
-    if (!data.incoterm) {
-    setSubmitError(
-      "Veuillez sélectionner un terme d'incoterm."
-    );
-    return;
-  }
-
-  if (!data.currency) {
-    setSubmitError(
-      "Veuillez sélectionner une devise."
-    );
+  const attachmentsError = validateAttachments(data, attachments);
+  if (attachmentsError) {
+    setSubmitError(attachmentsError);
     return;
   }
 
@@ -147,11 +193,15 @@ async function onSubmit(data) {
 
     if (isEditMode) {
       await updateListing(id, payload);
+      navigate("/listings/mine", {
+        state: { successMessage: "Annonce modifiée avec succès." },
+      });
     } else {
       await createListing(payload);
+      navigate("/listings/mine", {
+        state: { successMessage: "Annonce créée avec succès." },
+      });
     }
-
-    navigate("/listings/mine");
   } catch (err) {
     setSubmitError(
       err.message ||
@@ -238,6 +288,15 @@ async function handleConfirmEdit() {
         ) : (
 <form
   onSubmit={handleSubmit((data) => {
+    setSubmitError(null);
+    setAttemptedSubmit(true);
+
+    const attachmentsError = validateAttachments(data, attachments);
+    if (attachmentsError) {
+      setSubmitError(attachmentsError);
+      return;
+    }
+
     if (isEditMode) {
       setFormDataToSubmit(data);
       setShowConfirmModal(true);
@@ -271,6 +330,7 @@ async function handleConfirmEdit() {
                 onChange={(value) =>
                   setValue("type", value)
                 }
+                error={selectErrors.type}
               />
             </div>
 
@@ -285,9 +345,8 @@ async function handleConfirmEdit() {
             />
 
             <div
+              className="grid-main-side"
               style={{
-                display: "grid",
-                gridTemplateColumns: "3fr 1fr",
                 gap: "15px",
               }}
             >
@@ -322,6 +381,7 @@ async function handleConfirmEdit() {
                       value
                     )
                   }
+                  error={selectErrors.quantityUnit}
                 />
               </div>
             </div>
@@ -344,6 +404,7 @@ async function handleConfirmEdit() {
                 onChange={(value) =>
                   setValue("category", value)
                 }
+                error={selectErrors.category}
               />
             </div>
           </div>
@@ -356,9 +417,8 @@ async function handleConfirmEdit() {
             </h2>
 
             <div
+              className="grid-main-side"
               style={{
-                display: "grid",
-                gridTemplateColumns: "3fr 1fr",
                 gap: "15px",
               }}
             >
@@ -393,6 +453,7 @@ async function handleConfirmEdit() {
                       value
                     )
                   }
+                  error={selectErrors.currency}
                 />
               </div>
             </div>
@@ -415,6 +476,7 @@ async function handleConfirmEdit() {
                 onChange={(value) =>
                   setValue("incoterm", value)
                 }
+                error={selectErrors.incoterm}
               />
             </div>
           </div>
@@ -444,6 +506,7 @@ async function handleConfirmEdit() {
                 onChange={(value) =>
                   setValue("country", value)
                 }
+                error={selectErrors.country}
               />
             </div>
 
@@ -466,7 +529,11 @@ async function handleConfirmEdit() {
           {/* SECTION PIÈCES JOINTES */}
 
           <SectionCard title="📎 Pièces jointes">
-            <FileDropzone files={attachments} onChange={setAttachments} />
+            <FileDropzone
+              files={attachments}
+              onChange={setAttachments}
+              showValidation={attemptedSubmit}
+            />
           </SectionCard>
 
           {/* ERREUR */}

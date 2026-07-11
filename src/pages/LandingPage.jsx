@@ -24,12 +24,11 @@ export default function LandingPage() {
         }}
       >
         <div
+          className="grid-2-col"
           style={{
             maxWidth: 1200,
             margin: "0 auto",
             padding: `${spacing.xxl}px ${spacing.xl}px`,
-            display: "grid",
-            gridTemplateColumns: "1.1fr 1fr",
             alignItems: "center",
             gap: spacing.xl,
             minHeight: 520,
@@ -98,7 +97,7 @@ export default function LandingPage() {
                 </Button>
               </Link>
 
-              <Link to="/listings">
+              <Link to="/listings/catalog">
                 <Button variant="secondary">
                   Voir les annonces
                 </Button>

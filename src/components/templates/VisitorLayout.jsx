@@ -1,4 +1,6 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 import { colors, spacing, typography } from "../../styles/tokens";
 
 const NAV_ITEMS = [
@@ -10,6 +12,13 @@ const NAV_ITEMS = [
 ];
 
 export default function VisitorLayout() {
+  const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {/* Header */}
@@ -28,6 +37,7 @@ export default function VisitorLayout() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            flexWrap: "wrap",
             gap: spacing.lg,
           }}
         >
@@ -48,8 +58,8 @@ export default function VisitorLayout() {
             </span>
           </NavLink>
 
-          {/* Navigation */}
-          <nav style={{ display: "flex", gap: spacing.sm, alignItems: "center", flexWrap: "wrap" }}>
+          {/* Navigation desktop (masquée sur mobile via CSS, voir index.css) */}
+          <nav className="desktop-nav" style={{ display: "flex", gap: spacing.sm, alignItems: "center", flexWrap: "wrap" }}>
             {NAV_ITEMS.map((item) => (
               <NavLink
                 key={item.to}
@@ -73,8 +83,8 @@ export default function VisitorLayout() {
             ))}
           </nav>
 
-          {/* Auth Buttons */}
-          <div style={{ display: "flex", gap: spacing.sm, alignItems: "center", flexShrink: 0 }}>
+          {/* Auth Buttons (desktop uniquement, repris dans le menu mobile) */}
+          <div className="desktop-nav" style={{ gap: spacing.sm, alignItems: "center", flexShrink: 0 }}>
             <NavLink
               to="/auth/login"
               style={({ isActive }) => ({
@@ -113,7 +123,94 @@ export default function VisitorLayout() {
               Inscription
             </NavLink>
           </div>
+
+          {/* Bouton burger (mobile uniquement via CSS) */}
+          <button
+            className="mobile-burger-button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={isMenuOpen}
+            style={{
+              border: `1px solid ${colors.border}`,
+              background: "#fff",
+              borderRadius: "8px",
+              width: 40,
+              height: 40,
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: colors.textPrimary,
+              flexShrink: 0,
+            }}
+          >
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
+
+        {/* Panneau de navigation mobile (déplié par le bouton burger) */}
+        {isMenuOpen && (
+          <nav
+            className="mobile-nav-panel"
+            style={{
+              maxWidth: "1400px",
+              margin: `${spacing.md}px auto 0`,
+              display: "flex",
+              flexDirection: "column",
+              gap: 4,
+              paddingTop: spacing.md,
+              borderTop: `1px solid ${colors.border}`,
+            }}
+          >
+            {NAV_ITEMS.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                style={({ isActive }) => ({
+                  textDecoration: "none",
+                  color: isActive ? colors.primary : colors.textMuted,
+                  fontSize: typography.fontSizeBase,
+                  fontWeight: isActive ? 700 : 500,
+                  padding: `${spacing.md}px`,
+                  borderRadius: "8px",
+                  backgroundColor: isActive ? colors.primarySoft : "transparent",
+                })}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+            <NavLink
+              to="/auth/login"
+              style={{
+                textDecoration: "none",
+                color: colors.textPrimary,
+                fontSize: typography.fontSizeBase,
+                fontWeight: 600,
+                padding: `${spacing.md}px`,
+                border: `1px solid ${colors.border}`,
+                borderRadius: "8px",
+                marginTop: spacing.sm,
+              }}
+            >
+              Connexion
+            </NavLink>
+            <NavLink
+              to="/auth/register"
+              style={{
+                textDecoration: "none",
+                color: colors.background,
+                fontSize: typography.fontSizeBase,
+                fontWeight: 700,
+                padding: `${spacing.md}px`,
+                backgroundColor: colors.primary,
+                borderRadius: "8px",
+                textAlign: "center",
+              }}
+            >
+              Inscription
+            </NavLink>
+          </nav>
+        )}
       </header>
 
       {/* Main Content */}

@@ -1,7 +1,30 @@
 import { useRef, useState } from "react";
 import { Paperclip, X, FileText } from "lucide-react";
 
-const DOCUMENT_TYPES = [
+// Contraintes de validation des fichiers uploadés (certificats, fiches techniques...).
+// À terme ces règles seront revalidées côté serveur, mais on évite déjà côté
+// client qu'un .exe/.zip ou un fichier trop volumineux soit accepté.
+export const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 Mo
+
+export const ACCEPTED_MIME_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+];
+
+export const ACCEPTED_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png", ".webp"];
+
+export function isAcceptedFile(file) {
+  const name = file.name?.toLowerCase() || "";
+  const hasAcceptedExtension = ACCEPTED_EXTENSIONS.some((ext) => name.endsWith(ext));
+  const hasAcceptedMime = ACCEPTED_MIME_TYPES.includes(file.type);
+  // On accepte si le MIME OU l'extension correspond (certains navigateurs/OS
+  // ne renseignent pas toujours file.type de façon fiable).
+  return hasAcceptedMime || hasAcceptedExtension;
+}
+
+export const DOCUMENT_TYPES = [
   {
     value: "photo",
     label: "📸 Photo produit",
@@ -31,24 +54,48 @@ const DOCUMENT_TYPES = [
 export default function FileDropzone({
   files,
   onChange,
+  showValidation = false,
 }) {
   const inputRef = useRef(null);
 
   const [dragOver, setDragOver] =
     useState(false);
 
+  const [uploadErrors, setUploadErrors] =
+    useState([]);
+
   function addFiles(fileList) {
-    const newFiles = Array.from(fileList).map(
-      (file) => ({
+    const incoming = Array.from(fileList);
+    const accepted = [];
+    const rejected = [];
+
+    incoming.forEach((file) => {
+      if (!isAcceptedFile(file)) {
+        rejected.push(
+          `${file.name} : type de fichier non autorisé (PDF ou image uniquement)`
+        );
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        rejected.push(
+          `${file.name} : fichier trop volumineux (10 Mo maximum)`
+        );
+        return;
+      }
+      accepted.push({
         name: file.name,
         size: file.size,
         file,
         label: "",
         type: "",
-      })
-    );
+      });
+    });
 
-    onChange([...files, ...newFiles]);
+    setUploadErrors(rejected);
+
+    if (accepted.length > 0) {
+      onChange([...files, ...accepted]);
+    }
   }
 
   function removeFile(index) {
@@ -165,10 +212,21 @@ export default function FileDropzone({
           brochures...
         </p>
 
+        <p
+          style={{
+            color: "#94a3b8",
+            fontSize: 12,
+            marginTop: 4,
+          }}
+        >
+          Formats acceptés : PDF, JPG, PNG, WEBP — 10 Mo max par fichier
+        </p>
+
         <input
           ref={inputRef}
           type="file"
           multiple
+          accept={[...ACCEPTED_MIME_TYPES, ...ACCEPTED_EXTENSIONS].join(",")}
           hidden
           onChange={(e) =>
             e.target.files?.length &&
@@ -176,6 +234,33 @@ export default function FileDropzone({
           }
         />
       </div>
+
+      {/* Erreurs de validation d'upload (type / taille) */}
+
+      {uploadErrors.length > 0 && (
+        <div
+          style={{
+            marginTop: 12,
+            padding: "12px 14px",
+            background: "#fef2f2",
+            border: "1px solid #fecaca",
+            borderRadius: 12,
+          }}
+        >
+          {uploadErrors.map((message, i) => (
+            <p
+              key={i}
+              style={{
+                color: "#dc2626",
+                fontSize: 13,
+                margin: i === 0 ? 0 : "4px 0 0",
+              }}
+            >
+              ⚠️ {message}
+            </p>
+          ))}
+        </div>
+      )}
 
       {/* Documents */}
 
@@ -189,14 +274,20 @@ export default function FileDropzone({
           }}
         >
           {files.map(
-            (file, index) => (
+            (file, index) => {
+              const isIncomplete =
+                showValidation &&
+                (!file.label?.trim() || !file.type);
+
+              return (
               <div
                 key={`${file.name}-${index}`}
                 style={{
                   background:
                     "#f8fafc",
-                  border:
-                    "1px solid #e2e8f0",
+                  border: isIncomplete
+                    ? "1px solid #dc2626"
+                    : "1px solid #e2e8f0",
                   borderRadius:
                     "14px",
                   padding: "16px",
@@ -373,9 +464,21 @@ export default function FileDropzone({
                   )}
                 </div>
 
-                
+                {isIncomplete && (
+                  <p
+                    style={{
+                      color: "#dc2626",
+                      fontSize: 13,
+                      marginTop: 10,
+                      marginBottom: 0,
+                    }}
+                  >
+                    ⚠️ Titre et type de document requis
+                  </p>
+                )}
               </div>
-            )
+              );
+            }
           )}
         </div>
       )}

@@ -1,16 +1,31 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { requestPasswordReset } from "../api/auth";
+
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const [isSent, setIsSent] = useState(false);
-const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const navigate = useNavigate();
 
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    // TODO API reset password
-    setIsSent(true);
+  async function onSubmit(data) {
+    setSubmitError(null);
+    setIsSubmitting(true);
+    try {
+      await requestPasswordReset(data.email);
+      setIsSent(true);
+    } catch (err) {
+      setSubmitError(err.message || "Une erreur est survenue. Réessayez plus tard.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -74,7 +89,7 @@ const navigate = useNavigate();
         </div>
 
         {!isSent ? (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div
               style={{
                 marginBottom: "20px",
@@ -93,24 +108,54 @@ const navigate = useNavigate();
               <input
                 type="email"
                 placeholder="contact@entreprise.com"
-                value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
-                required
+                {...register("email", {
+                  required: "Email requis",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Adresse email invalide",
+                  },
+                })}
                 style={{
                   width: "100%",
                   padding: "14px",
-                  border:
-                    "1px solid #d1d5db",
+                  border: `1px solid ${errors.email ? "#dc2626" : "#d1d5db"}`,
                   borderRadius: "12px",
                   fontSize: "16px",
+                  boxSizing: "border-box",
                 }}
               />
+
+              {errors.email && (
+                <p
+                  style={{
+                    color: "#dc2626",
+                    marginTop: "6px",
+                    fontSize: "14px",
+                  }}
+                >
+                  {errors.email.message}
+                </p>
+              )}
             </div>
+
+            {submitError && (
+              <div
+                style={{
+                  marginBottom: "16px",
+                  padding: "12px 14px",
+                  borderRadius: "10px",
+                  background: "#fef2f2",
+                  color: "#dc2626",
+                  fontSize: "14px",
+                }}
+              >
+                {submitError}
+              </div>
+            )}
 
             <button
               type="submit"
+              disabled={isSubmitting}
               style={{
                 width: "100%",
                 padding: "16px",
@@ -121,10 +166,11 @@ const navigate = useNavigate();
                 color: "#fff",
                 fontWeight: "700",
                 fontSize: "16px",
-                cursor: "pointer",
+                cursor: isSubmitting ? "default" : "pointer",
+                opacity: isSubmitting ? 0.7 : 1,
               }}
             >
-              📩 Envoyer le lien
+              {isSubmitting ? "Envoi en cours..." : "📩 Envoyer le lien"}
             </button>
           </form>
         ) : (
@@ -171,19 +217,19 @@ const navigate = useNavigate();
           }}
         >
           <button
-  type="button"
-  onClick={() => navigate(-1)}
-  style={{
-    border: "none",
-    background: "transparent",
-    color: "#4f46e5",
-    fontWeight: "600",
-    cursor: "pointer",
-    fontSize: "15px",
-  }}
->
-  ← Retour
-</button>
+            type="button"
+            onClick={() => navigate(-1)}
+            style={{
+              border: "none",
+              background: "transparent",
+              color: "#4f46e5",
+              fontWeight: "600",
+              cursor: "pointer",
+              fontSize: "15px",
+            }}
+          >
+            ← Retour
+          </button>
         </div>
       </div>
     </div>
