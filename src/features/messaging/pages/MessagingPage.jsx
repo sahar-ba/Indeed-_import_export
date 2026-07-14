@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Paperclip, Send, ArrowLeft, Lock } from "lucide-react";
 import { useResourceList } from "../../../hooks/useResourceList";
+import { useAuth } from "../../../context/AuthContext";
 import {
   getConversations,
   getConversationById,
@@ -37,30 +38,7 @@ function formatTime(iso) {
   });
 }
 
-// Détermine si une pièce jointe est une image (pour afficher une miniature
-// cliquable plutôt qu'une simple icône de document).
-function isImageAttachment(attachment) {
-  if (attachment?.file?.type) return attachment.file.type.startsWith("image/");
-  return /\.(png|jpe?g|webp|gif)$/i.test(attachment?.name || "");
-}
-
-// URL à ouvrir/prévisualiser pour une pièce jointe. En mode mock, un
-// fichier tout juste sélectionné par l'utilisateur n'existe que côté
-// navigateur : on génère une URL locale (blob:) via URL.createObjectURL,
-// qui reste valable tant que l'onglet n'est pas fermé. Une fois un vrai
-// backend branché, `attachment.url` (renvoyé par le serveur) prendra le
-// relais automatiquement.
-function getAttachmentUrl(attachment) {
-  if (!attachment) return null;
-  if (attachment.url) return attachment.url;
-  if (attachment.file) {
-    if (!attachment.file.__objectUrl) {
-      attachment.file.__objectUrl = URL.createObjectURL(attachment.file);
-    }
-    return attachment.file.__objectUrl;
-  }
-  return null;
-}
+import { isImageAttachment, getAttachmentUrl } from "../../../utils/attachments";
 
 export default function MessagingPage() {
   const { id } = useParams();
@@ -225,6 +203,8 @@ export default function MessagingPage() {
 
 function ConversationThread({ conversation, onRefetch }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const myLogoUrl = user?.profile?.logoUrl || null;
   const [text, setText] = useState("");
   const [attachment, setAttachment] = useState(null);
   const [attachmentError, setAttachmentError] = useState(null);
@@ -415,9 +395,18 @@ function ConversationThread({ conversation, onRefetch }) {
                   fontWeight: 700,
                   fontSize: 11,
                   flexShrink: 0,
+                  overflow: "hidden",
                 }}
               >
-                {initials(avatarName)}
+                {isMine && myLogoUrl ? (
+                  <img
+                    src={myLogoUrl}
+                    alt=""
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  initials(avatarName)
+                )}
               </div>
 
               <div>

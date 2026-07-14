@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import StatusBadge from "../components/molecules/StatusBadge";
 import SectionCard from "../components/molecules/SectionCard";
+import CompanyLogoUpload from "../components/molecules/CompanyLogoUpload";
 import Reveal from "../components/atoms/Reveal";
 import Input from "../components/atoms/Input";
 import Select from "../components/atoms/Select";
 import Button from "../components/atoms/Button";
+import { uploadCompanyLogo } from "../api/auth";
 import { colors, spacing, typography } from "../styles/tokens";
 
 const COUNTRY_OPTIONS = [
@@ -52,7 +54,7 @@ function FieldLabel({ children }) {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const [accountInfo, setAccountInfo] = useState({
     email: user?.email || "",
@@ -67,13 +69,32 @@ export default function ProfilePage() {
     certifications: user?.profile?.certifications?.join(", ") || "",
   });
 
+  const [logoUrl, setLogoUrl] = useState(user?.profile?.logoUrl || null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [logoUploadError, setLogoUploadError] = useState("");
+
+  async function handleLogoSelected(file) {
+    setLogoUploadError("");
+    setIsUploadingLogo(true);
+    try {
+      const { logoUrl: uploadedUrl } = await uploadCompanyLogo(file);
+      setLogoUrl(uploadedUrl);
+      // Persisté immédiatement dans le contexte d'auth : le logo devient
+      // aussitôt disponible partout dans l'app (ex: avatar messagerie),
+      // sans attendre le clic sur "Enregistrer" du formulaire entreprise.
+      updateUser({ profile: { ...user?.profile, logoUrl: uploadedUrl } });
+    } catch (err) {
+      setLogoUploadError(err.message || "Échec de l'envoi du logo.");
+    } finally {
+      setIsUploadingLogo(false);
+    }
+  }
+
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
-
-  const initial = (companyInfo.companyName || "?").trim().charAt(0).toUpperCase();
 
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
@@ -110,25 +131,25 @@ export default function ProfilePage() {
               top: spacing.lg,
             }}
           >
-            <div
-              className="hover-lift"
-              style={{
-                width: 84,
-                height: 84,
-                borderRadius: "50%",
-                background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryHover})`,
-                margin: "0 auto 16px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                fontFamily: typography.display,
-                fontSize: 32,
-                fontWeight: 700,
-              }}
-            >
-              {initial}
-            </div>
+            <CompanyLogoUpload
+              logoUrl={logoUrl}
+              companyName={companyInfo.companyName}
+              onFileSelected={handleLogoSelected}
+              isUploading={isUploadingLogo}
+            />
+            {logoUploadError && (
+              <p
+                style={{
+                  color: colors.danger,
+                  fontFamily: typography.body,
+                  fontSize: 12,
+                  marginTop: -8,
+                  marginBottom: 12,
+                }}
+              >
+                ⚠️ {logoUploadError}
+              </p>
+            )}
 
             <h3
               style={{

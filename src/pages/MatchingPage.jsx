@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaRobot,
@@ -8,13 +8,21 @@ import {
   FaShieldAlt,
   FaClock,
   FaCommentDots,
+  FaBuilding,
+  FaUserTie,
 } from "react-icons/fa";
 
 import { useResourceList } from "../hooks/useResourceList";
 import { getMatches } from "../api/matches";
 import { getOrCreateConversation } from "../features/messaging/api/messages";
+import { getPublicAccount } from "../api/accounts";
 import AsyncState from "../components/organisms/AsyncState";
 import { colors, radius, shadow, spacing, typography } from "../styles/tokens";
+
+const ROLE_LABEL = {
+  importer: "Importateur",
+  exporter: "Exportateur",
+};
 
 // Chaque clé de `reasons` correspond à un critère évalué par l'agent IA.
 const REASON_META = {
@@ -48,14 +56,49 @@ export default function MatchingPage() {
   const [contactingId, setContactingId] = useState(null);
   const [contactError, setContactError] = useState(null);
   const [selectedMatch, setSelectedMatch] = useState(null);
+  const [ownerAccount, setOwnerAccount] = useState(null);
+  const [isOwnerAccountLoading, setIsOwnerAccountLoading] = useState(false);
+
+  // Dès qu'on ouvre le détail d'une correspondance, on va chercher le profil
+  // public complet de l'entreprise (secteur, certifications, description...)
+  // en plus des infos déjà connues (nom, pays) portées par le match lui-même.
+  useEffect(() => {
+    if (!selectedMatch?.counterpart?.ownerId) {
+      setOwnerAccount(null);
+      return;
+    }
+
+    let isCancelled = false;
+    setIsOwnerAccountLoading(true);
+    setOwnerAccount(null);
+
+    getPublicAccount(selectedMatch.counterpart.ownerId)
+      .then((account) => {
+        if (!isCancelled) setOwnerAccount(account);
+      })
+      .catch(() => {
+        if (!isCancelled) setOwnerAccount(null);
+      })
+      .finally(() => {
+        if (!isCancelled) setIsOwnerAccountLoading(false);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedMatch?.counterpart?.ownerId]);
 
   async function handleContact(match) {
     setContactingId(match.id);
     setContactError(null);
     try {
+      // On identifie la conversation par l'annonce RÉELLE du partenaire
+      // (celle qu'il propose), pas la vôtre — cohérent avec "Voir l'annonce
+      // du partenaire", et ça évite qu'un même produit chez vous mélange les
+      // conversations de plusieurs partenaires différents.
       const conversation = await getOrCreateConversation(
-        match.listingId,
-        match.listing,
+        match.counterpartListing?.id || match.listingId,
+        match.counterpartListing || match.listing,
         match.counterpart
       );
       navigate(`/messages/${conversation.id}`);
@@ -415,6 +458,30 @@ export default function MatchingPage() {
                   Correspond à votre annonce «{" "}
                   {selectedMatch.listing?.product || "Annonce"} »
                 </p>
+
+                {selectedMatch.counterpartListing && (
+                  <button
+                    onClick={() => {
+                      navigate(`/listings/${selectedMatch.counterpartListing.id}`);
+                      setSelectedMatch(null);
+                    }}
+                    style={{
+                      border: "none",
+                      background: "none",
+                      padding: 0,
+                      marginTop: 4,
+                      font: "inherit",
+                      fontSize: 13,
+                      color: colors.primary,
+                      fontWeight: 600,
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
+                    📄 Voir l'annonce de {selectedMatch.counterpart?.name || "ce partenaire"} : «{" "}
+                    {selectedMatch.counterpartListing.product} »
+                  </button>
+                )}
               </div>
 
               <button
@@ -432,6 +499,106 @@ export default function MatchingPage() {
                 ×
               </button>
             </div>
+
+            {/* Profil complet de l'entreprise partenaire : emplacement,
+                secteur, certifications, description. */}
+            {(isOwnerAccountLoading || ownerAccount) && (
+              <div
+                style={{
+                  padding: spacing.md,
+                  borderRadius: radius.sm,
+                  background: colors.surface,
+                  border: `1px solid ${colors.border}`,
+                  marginBottom: spacing.lg,
+                }}
+              >
+                {isOwnerAccountLoading ? (
+                  <p style={{ margin: 0, color: colors.textMuted, fontSize: typography.fontSizeSm }}>
+                    Chargement du profil de l'entreprise...
+                  </p>
+                ) : (
+                  <>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: spacing.sm }}>
+                      <div
+                        style={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: "50%",
+                          background: "linear-gradient(135deg,#4f46e5,#4338ca)",
+                          color: "#fff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 18,
+                          flexShrink: 0,
+                        }}
+                      >
+                        <FaBuilding />
+                      </div>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                          <strong style={{ fontSize: 15, color: colors.textPrimary }}>
+                            {ownerAccount.companyName}
+                          </strong>
+                          <span
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 6,
+                              padding: "3px 10px",
+                              borderRadius: "999px",
+                              background: "#eef2ff",
+                              color: colors.primary,
+                              fontSize: 12,
+                              fontWeight: 700,
+                            }}
+                          >
+                            <FaUserTie />
+                            {ROLE_LABEL[ownerAccount.role] || ownerAccount.role}
+                          </span>
+                          {ownerAccount.profileStatus === "validated" && (
+                            <span style={{ fontSize: 12, fontWeight: 600, color: colors.success }}>
+                              ✅ Profil validé
+                            </span>
+                          )}
+                        </div>
+                        <p style={{ margin: "4px 0 0", color: colors.textMuted, fontSize: 13 }}>
+                          🌍 {ownerAccount.country}
+                          {ownerAccount.sector && <> · {ownerAccount.sector}</>}
+                          {ownerAccount.memberSince && <> · Membre depuis {ownerAccount.memberSince}</>}
+                        </p>
+                      </div>
+                    </div>
+
+                    {ownerAccount.certifications?.length > 0 && (
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: spacing.sm }}>
+                        {ownerAccount.certifications.map((cert) => (
+                          <span
+                            key={cert}
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 600,
+                              padding: "3px 10px",
+                              borderRadius: "999px",
+                              background: "#f0fdf4",
+                              color: colors.success,
+                            }}
+                          >
+                            ✅ {cert}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {ownerAccount.description && (
+                      <p style={{ margin: 0, color: colors.textPrimary, fontSize: 14, lineHeight: 1.5 }}>
+                        {ownerAccount.description}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
 
             {/* Score */}
             <div
@@ -517,7 +684,7 @@ export default function MatchingPage() {
               })}
             </div>
 
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: spacing.sm }}>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: spacing.sm, flexWrap: "wrap" }}>
               <button
                 onClick={() => setSelectedMatch(null)}
                 style={{
@@ -532,6 +699,27 @@ export default function MatchingPage() {
               >
                 Fermer
               </button>
+
+              {selectedMatch.counterpartListing && (
+                <button
+                  onClick={() => {
+                    navigate(`/listings/${selectedMatch.counterpartListing.id}`);
+                    setSelectedMatch(null);
+                  }}
+                  style={{
+                    padding: "10px 18px",
+                    border: `1px solid ${colors.primary}`,
+                    borderRadius: radius.sm,
+                    background: "#fff",
+                    color: colors.primary,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  📄 Voir l'annonce du partenaire
+                </button>
+              )}
+
               <button
                 onClick={() => handleContact(selectedMatch)}
                 disabled={contactingId === selectedMatch.id}

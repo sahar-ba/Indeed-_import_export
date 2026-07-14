@@ -30,6 +30,39 @@ export async function getCurrentUser() {
   return data;
 }
 
+/**
+ * Upload du logo entreprise. En mode mock, on convertit le fichier en
+ * data URL (base64) pour pouvoir l'afficher immédiatement sans backend —
+ * une fois un vrai serveur branché, il suffira de renvoyer l'URL du
+ * fichier stocké (S3, etc.) à la place.
+ */
+export async function uploadCompanyLogo(file) {
+  if (USE_MOCKS) {
+    await delay(400);
+    const logoUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Impossible de lire le fichier."));
+      reader.readAsDataURL(file);
+    });
+    return { logoUrl };
+  }
+
+  const formData = new FormData();
+  formData.append("logo", file);
+
+  try {
+    const { data } = await apiClient.post("/auth/profile/logo", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data;
+  } catch (err) {
+    throw new Error(
+      err.response?.data?.message || "Impossible d'envoyer le logo pour le moment. Réessayez plus tard."
+    );
+  }
+}
+
 export async function completeProfile(payload) {
   if (USE_MOCKS) {
     await delay(400);

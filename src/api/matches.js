@@ -21,6 +21,12 @@ export async function getMatches(params = {}) {
       .map((match) => ({
         ...match,
         listing: mockListings.find((l) => l.id === match.listingId) || null,
+        // La vraie annonce du partenaire (son offre/demande), distincte de
+        // votre propre annonce référencée par `listingId` — c'est celle-ci
+        // qu'il faut afficher/ouvrir quand on veut "voir l'annonce" du match,
+        // pas la vôtre.
+        counterpartListing:
+          mockListings.find((l) => l.id === match.counterpartListingId) || null,
       }))
       .filter(
         (match) =>

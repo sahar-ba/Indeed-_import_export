@@ -12,9 +12,10 @@ export const ACCEPTED_MIME_TYPES = [
   "image/png",
   "image/webp",
   "text/plain",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
-export const ACCEPTED_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png", ".webp", ".txt"];
+export const ACCEPTED_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png", ".webp", ".txt", ".docx"];
 
 export function isAcceptedFile(file) {
   const name = file.name?.toLowerCase() || "";
@@ -221,7 +222,7 @@ export default function FileDropzone({
             marginTop: 4,
           }}
         >
-          Formats acceptés : PDF, JPG, PNG, WEBP, TXT — 10 Mo max par fichier
+          Formats acceptés : PDF, JPG, PNG, WEBP, TXT, DOCX — 10 Mo max par fichier
         </p>
 
         <input

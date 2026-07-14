@@ -8,6 +8,7 @@ export const mockUser = {
     country: "France",
     sector: "Agroalimentaire",
     certifications: ["ISO 22000"],
+    logoUrl: null,
   },
   profileStatus: "pending", // "pending" | "validated" | "rejected"
 };

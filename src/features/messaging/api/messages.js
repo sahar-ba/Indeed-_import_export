@@ -88,8 +88,17 @@ export async function updateConversationStatus(conversationId, status) {
 
 export async function getOrCreateConversation(listingId, listing, counterpartInfo) {
   await delay(300);
-  // Chercher si une conversation existe déjà pour ce listing
-  let conversation = mockConversations.find((c) => c.listingId === listingId);
+
+  const counterpartName = counterpartInfo?.name || "Vendeur";
+
+  // Une même annonce (la vôtre) peut être mise en correspondance avec
+  // PLUSIEURS entreprises différentes (ex: plusieurs matches IA sur le même
+  // produit). Chercher uniquement par `listingId` fusionnait à tort ces
+  // conversations entre elles dès qu'elles portaient sur la même annonce.
+  // On identifie donc une conversation par la paire (annonce, partenaire).
+  let conversation = mockConversations.find(
+    (c) => c.listingId === listingId && c.counterpart?.name === counterpartName
+  );
   
   if (!conversation) {
     // Créer une nouvelle conversation

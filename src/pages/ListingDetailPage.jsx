@@ -9,6 +9,7 @@ import {
   isListingFavorited,
   toggleFavorite,
 } from "../api/favorites";
+import { isImageAttachment, getAttachmentUrl } from "../utils/attachments";
 import AsyncState from "../components/organisms/AsyncState";
 import DetailCard from "../components/molecules/DetailCard";
 
@@ -326,10 +327,33 @@ const isMyListing =
                     }}
                   >
                     {listing.attachments.map(
-                      (file, index) => (
-                        <div
+                      (file, index) => {
+                        const url = getAttachmentUrl(file);
+                        const isImage = isImageAttachment(file);
+
+                        return (
+                        <a
                           key={index}
+                          href={url || undefined}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            if (!url) {
+                              e.preventDefault();
+                              window.alert(
+                                `Aperçu indisponible pour "${file.name}" : ce document de démonstration n'a pas de fichier réel associé (aucun backend de stockage connecté pour l'instant).`
+                              );
+                            }
+                          }}
+                          title={
+                            url
+                              ? `Ouvrir ${file.name}`
+                              : `Aperçu indisponible pour ${file.name}`
+                          }
                           style={{
+                            display: "block",
+                            textDecoration: "none",
+                            color: "inherit",
                             border:
                               "1px solid #E4E2DC",
                             borderRadius:
@@ -337,6 +361,14 @@ const isMyListing =
                             padding: "18px",
                             background:
                               "#F6F5F2",
+                            cursor: "pointer",
+                            transition: "box-shadow 0.15s, transform 0.15s",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.08)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = "none";
                           }}
                         >
                           {/* TYPE */}
@@ -384,22 +416,45 @@ const isMyListing =
                               file.name}
                           </div>
 
+                          {/* APERÇU IMAGE (si applicable) */}
+
+                          {isImage && url && (
+                            <img
+                              src={url}
+                              alt={file.name}
+                              style={{
+                                width: "100%",
+                                maxHeight: "160px",
+                                objectFit: "cover",
+                                borderRadius: "10px",
+                                marginBottom: "10px",
+                                display: "block",
+                              }}
+                            />
+                          )}
+
                           {/* NOM FICHIER */}
 
                           <div
                             style={{
                               color:
-                                "#6B6D76",
+                                url ? "#4f46e5" : "#6B6D76",
                               fontSize:
                                 "14px",
                               wordBreak:
                                 "break-word",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              fontWeight: url ? 600 : 400,
                             }}
                           >
                             📄 {file.name}
+                            {url ? " ↗" : " (aperçu indisponible)"}
                           </div>
-                        </div>
-                      )
+                        </a>
+                        );
+                      }
                     )}
                   </div>
                 </div>

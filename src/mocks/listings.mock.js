@@ -128,6 +128,62 @@ export const mockListings = [
       
     ],
   },
+
+  // Annonces réelles appartenant aux entreprises partenaires (counterparts)
+  // des correspondances IA (mockMatches ci-dessous) — pour que "Voir
+  // l'annonce du partenaire" pointe vers un vrai contenu, distinct de
+  // l'annonce de l'utilisateur connecté.
+  {
+    id: "4",
+    type: "offer",
+    product: "Panneaux solaires monocristallins",
+    quantity: 2200,
+    quantityUnit: "piece",
+    price: 148000,
+    currency: "USD",
+    country: "Chine",
+    category: "Industrie",
+    incoterm: "CIF",
+    deadline: "2026-08-20",
+    certifications: ["CE", "ISO 9001"],
+    ownerId: "user_solartech",
+    status: "active",
+    attachments: [],
+  },
+  {
+    id: "5",
+    type: "offer",
+    product: "Huile d'olive extra vierge (variété Picual)",
+    quantity: 3000,
+    quantityUnit: "L",
+    price: 3.6,
+    currency: "USD",
+    country: "Espagne",
+    category: "Agroalimentaire",
+    incoterm: "FOB",
+    deadline: "2026-09-30",
+    certifications: ["IFS Food"],
+    ownerId: "user_olivetrade",
+    status: "active",
+    attachments: [],
+  },
+  {
+    id: "6",
+    type: "demand",
+    product: "Huile d'olive extra vierge",
+    quantity: 4000,
+    quantityUnit: "L",
+    price: 3.5,
+    currency: "EUR",
+    country: "Belgique",
+    category: "Agroalimentaire",
+    incoterm: "DAP",
+    deadline: "2026-09-01",
+    certifications: ["Bio"],
+    ownerId: "user_epicerie",
+    status: "active",
+    attachments: [],
+  },
 ];
 
 export const mockMatches = [
@@ -156,9 +212,14 @@ export const mockMatches = [
     },
 
     counterpart: {
-      name: "Green Import Co.",
-      country: "France",
+      name: "Épicerie Gourmande Belgique",
+      country: "Belgique",
+      ownerId: "user_epicerie",
     },
+
+    // Annonce réelle du partenaire (sa demande d'huile d'olive), distincte
+    // de votre propre annonce référencée par `listingId` ci-dessus.
+    counterpartListingId: "6",
   },
 
   {
@@ -188,7 +249,9 @@ export const mockMatches = [
     counterpart: {
       name: "SolarTech Guangzhou",
       country: "Chine",
+      ownerId: "user_solartech",
     },
+    counterpartListingId: "4",
   },
 
   {
@@ -218,6 +281,8 @@ export const mockMatches = [
     counterpart: {
       name: "Olive Trade Iberia",
       country: "Espagne",
+      ownerId: "user_olivetrade",
     },
+    counterpartListingId: "5",
   },
 ];
