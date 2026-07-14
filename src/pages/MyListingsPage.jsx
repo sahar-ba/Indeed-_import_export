@@ -183,7 +183,7 @@ const [filters, setFilters] = useState({});
       message:
         "L'annonce ne sera plus visible publiquement tant qu'elle est suspendue. Vous pourrez la réactiver à tout moment.",
       confirmLabel: "Oui, suspendre",
-      confirmColor: "#dc2626",
+      confirmColor: "#C22D2D",
     },
     reactivate: {
       icon: "▶️",
@@ -191,7 +191,7 @@ const [filters, setFilters] = useState({});
       message:
         "L'annonce redeviendra visible publiquement dans le catalogue.",
       confirmLabel: "Oui, réactiver",
-      confirmColor: "#4f46e5",
+      confirmColor: "#B8720A",
     },
     close: {
       icon: "⚠️",
@@ -199,7 +199,7 @@ const [filters, setFilters] = useState({});
       message:
         "Cette action rendra l'annonce clôturée. Elle ne sera plus affichée comme active.",
       confirmLabel: "Oui, clôturer",
-      confirmColor: "#dc2626",
+      confirmColor: "#C22D2D",
     },
     delete: {
       icon: "🗑️",
@@ -207,12 +207,13 @@ const [filters, setFilters] = useState({});
       message:
         "Cette action est irréversible : l'annonce et ses pièces jointes seront définitivement supprimées.",
       confirmLabel: "Oui, supprimer",
-      confirmColor: "#dc2626",
+      confirmColor: "#C22D2D",
     },
   };
 const filterFields = useMemo(
   () => [
     TYPE_FIELD,
+    STATUS_FIELD,
     COUNTRY_FIELD,
     CATEGORY_FIELD,
   ],
@@ -540,7 +541,7 @@ const filteredItems = items.filter(
               style={{
                 marginTop: 0,
                 marginBottom: "12px",
-                color: "#111827",
+                color: "#14161C",
               }}
             >
               {CONFIRM_CONTENT[confirmAction.type].icon}{" "}
@@ -575,7 +576,7 @@ const filteredItems = items.filter(
                   padding:
                     "10px 16px",
                   border:
-                    "1px solid #d1d5db",
+                    "1px solid #E4E2DC",
                   borderRadius:
                     "10px",
                   background:

@@ -227,7 +227,7 @@ async function handleConfirmEdit() {
   const sectionTitleStyle = {
     fontSize: "22px",
     fontWeight: "700",
-    color: "#111827",
+    color: "#14161C",
     marginBottom: "24px",
   };
 
@@ -235,7 +235,7 @@ async function handleConfirmEdit() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#f8fafc",
+        background: "#F6F5F2",
         padding: "40px 20px",
       }}
     >
@@ -264,7 +264,7 @@ async function handleConfirmEdit() {
             style={{
               fontSize: "42px",
               fontWeight: "700",
-              color: "#111827",
+              color: "#14161C",
               marginBottom: "10px",
             }}
           >
@@ -551,7 +551,7 @@ async function handleConfirmEdit() {
               border: "none",
               borderRadius: "18px",
               background:
-                "linear-gradient(135deg,#4f46e5,#4338ca)",
+                "linear-gradient(135deg,#B8720A,#9C5E08)",
               color: "white",
               fontSize: "18px",
               fontWeight: "700",
@@ -620,7 +620,7 @@ async function handleConfirmEdit() {
           style={{
             padding: "10px 16px",
             border:
-              "1px solid #d1d5db",
+              "1px solid #E4E2DC",
             borderRadius: "10px",
             background: "#fff",
             cursor: "pointer",
@@ -636,7 +636,7 @@ async function handleConfirmEdit() {
             padding: "10px 16px",
             border: "none",
             borderRadius: "10px",
-            background: "#4f46e5",
+            background: "#B8720A",
             color: "#fff",
             cursor: "pointer",
             fontWeight: 600,

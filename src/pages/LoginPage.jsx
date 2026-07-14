@@ -65,7 +65,7 @@ export default function LoginPage() {
           style={{
             textAlign: "center",
             marginBottom: "10px",
-            color: "#111827",
+            color: "#14161C",
           }}
         >
           Bon retour
@@ -117,7 +117,7 @@ export default function LoginPage() {
             {errors.email && (
               <p
                 style={{
-                  color: "#dc2626",
+                  color: "#C22D2D",
                   marginTop: "5px",
                   fontSize: "14px",
                 }}
@@ -158,7 +158,7 @@ export default function LoginPage() {
             {errors.password && (
               <p
                 style={{
-                  color: "#dc2626",
+                  color: "#C22D2D",
                   marginTop: "5px",
                   fontSize: "14px",
                 }}
@@ -176,7 +176,7 @@ export default function LoginPage() {
                 padding: "12px",
                 borderRadius: "10px",
                 background: "#fef2f2",
-                color: "#dc2626",
+                color: "#C22D2D",
                 border: "1px solid #fecaca",
               }}
             >
@@ -217,7 +217,7 @@ export default function LoginPage() {
     to="/forgot-password"
     style={{
       textDecoration: "none",
-      color: "#4f46e5",
+      color: "#B8720A",
       fontWeight: "600",
       fontSize: "14px",
     }}
@@ -236,7 +236,7 @@ export default function LoginPage() {
     border: "none",
     borderRadius: "14px",
     background:
-      "linear-gradient(135deg,#4f46e5,#4338ca)",
+      "linear-gradient(135deg,#B8720A,#9C5E08)",
     color: "white",
     fontSize: "16px",
     fontWeight: "600",
@@ -259,7 +259,7 @@ export default function LoginPage() {
           <Link
             to="/auth/register"
             style={{
-              color: "#4f46e5",
+              color: "#B8720A",
               fontWeight: "600",
               textDecoration: "none",
             }}

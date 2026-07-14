@@ -2,17 +2,6 @@ import apiClient, { USE_MOCKS } from "./client";
 import { delay } from "../utils/delay";
 import { mockUser } from "../mocks/auth.mock";
 
-/**
- * Contrat attendu du backend réel (Stagiaire 2) :
- * - POST /auth/register  -> { user, token }
- * - POST /auth/login     -> { user, token }
- * - GET  /auth/me        -> user
- * - PUT  /auth/profile   -> user
- * - POST /auth/forgot-password { email } -> { success: true }
- * Le `token` est un JWT ; il est stocké côté client par AuthContext via
- * utils/tokenStorage.js (localStorage ou sessionStorage selon "rester connecté").
- */
-
 export async function registerUser(payload) {
   if (USE_MOCKS) {
     await delay(400);

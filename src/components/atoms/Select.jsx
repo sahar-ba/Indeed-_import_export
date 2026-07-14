@@ -1,3 +1,5 @@
+import { colors, radius, typography } from "../../styles/tokens";
+
 export default function Select({
   value,
   options,
@@ -17,13 +19,14 @@ export default function Select({
 
           padding: "0 40px 0 16px", // ← espace à droite
 
-          border: `1px solid ${error ? "#dc2626" : "#E2E8F0"}`,
-          borderRadius: "12px",
+          border: `1px solid ${error ? colors.danger : colors.border}`,
+          borderRadius: radius.sm,
 
           backgroundColor: "#fff",
-          color: "#0F172A",
+          color: colors.textPrimary,
 
-          fontSize: "15px",
+          fontFamily: typography.body,
+          fontSize: typography.fontSizeBase,
           fontWeight: "500",
 
           outline: "none",
@@ -33,7 +36,7 @@ export default function Select({
           WebkitAppearance: "none",
           MozAppearance: "none",
 
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2364748b' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236B6D76' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
 
           backgroundRepeat: "no-repeat",
           backgroundPosition: "right 14px center",
@@ -57,7 +60,7 @@ export default function Select({
           comme pour Input), puisque ce Select est un composant contrôlé
           en dehors du register() — mais le rendu visuel reste identique. */}
       {error && (
-        <p style={{ color: "#dc2626", fontSize: 13, margin: "4px 0 0" }}>
+        <p style={{ color: colors.danger, fontSize: typography.fontSizeSm, margin: "4px 0 0" }}>
           {error}
         </p>
       )}

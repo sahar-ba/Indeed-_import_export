@@ -1,32 +1,53 @@
+import { colors, radius, shadow, typography } from "../../styles/tokens";
+
 export default function StepCard({
+  step,
   icon,
   title,
   description,
 }) {
   return (
     <div
+      className="hover-lift"
       style={{
-        background: "#fff",
-        borderRadius: "20px",
-        padding: "24px",
-        border: "1px solid #eef2f7",
-        boxShadow: "0 4px 18px rgba(0,0,0,0.05)",
+        background: colors.surfaceRaised,
+        borderRadius: radius.lg,
+        padding: "28px",
+        border: `1px solid ${colors.border}`,
+        boxShadow: shadow.card,
         height: "100%",
         minHeight: "220px",
         boxSizing: "border-box",
+        position: "relative",
       }}
     >
+      {step && (
+        <span
+          style={{
+            position: "absolute",
+            top: 24,
+            right: 26,
+            fontFamily: typography.mono,
+            fontSize: 13,
+            fontWeight: 500,
+            color: colors.border,
+          }}
+        >
+          {String(step).padStart(2, "0")}
+        </span>
+      )}
+
       <div
         style={{
-          width: 56,
-          height: 56,
-          borderRadius: "14px",
-          background: "#EEF2FF",
+          width: 52,
+          height: 52,
+          borderRadius: radius.md,
+          background: colors.primarySoft,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: "28px",
-          marginBottom: "18px",
+          fontSize: "26px",
+          marginBottom: "20px",
         }}
       >
         {icon}
@@ -34,11 +55,13 @@ export default function StepCard({
 
       <h3
         style={{
-          fontSize: "22px",
+          fontFamily: typography.display,
+          fontSize: "20px",
           fontWeight: 700,
-          color: "#0F172A",
+          color: colors.textPrimary,
           marginBottom: "12px",
           lineHeight: 1.3,
+          letterSpacing: "-0.01em",
         }}
       >
         {title}
@@ -46,9 +69,10 @@ export default function StepCard({
 
       <p
         style={{
-          color: "#64748B",
+          color: colors.textMuted,
+          fontFamily: typography.body,
           lineHeight: 1.7,
-          fontSize: "16px",
+          fontSize: "15px",
           margin: 0,
         }}
       >

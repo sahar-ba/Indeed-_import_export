@@ -1,10 +1,3 @@
-// Données factices pour le module Facturation & Abonnement.
-// Le compteur de messages ("usedChats") et l'état de l'abonnement ne pourront
-// être réels qu'une fois l'authentification et le backend de facturation
-// (Stagiaire 2 / prestataire de paiement) branchés — d'ici là, ces valeurs
-// restent statiques mais centralisées ici plutôt que codées en dur dans les
-// pages, pour faciliter le branchement futur (voir api/billing.js).
-
 export const mockUsage = {
   usedChats: 45,
   maxChats: 50,

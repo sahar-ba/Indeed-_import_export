@@ -30,7 +30,7 @@ export default function FavoritesPage() {
             fontSize: "42px",
             fontWeight: "800",
             marginBottom: "10px",
-            color: "#0f172a",
+            color: "#14161C",
           }}
         >
           📌 Opportunités sauvegardées
@@ -38,7 +38,7 @@ export default function FavoritesPage() {
 
         <p
           style={{
-            color: "#64748b",
+            color: "#6B6D76",
             fontSize: "17px",
           }}
         >
@@ -54,7 +54,7 @@ export default function FavoritesPage() {
             borderRadius: "28px",
             padding: "80px 40px",
             textAlign: "center",
-            border: "1px solid #e2e8f0",
+            border: "1px solid #E4E2DC",
           }}
         >
           <div
@@ -76,7 +76,7 @@ export default function FavoritesPage() {
 
           <p
             style={{
-              color: "#64748b",
+              color: "#6B6D76",
             }}
           >
             Ajoutez des annonces à vos favoris afin
@@ -90,7 +90,7 @@ export default function FavoritesPage() {
                 padding: "14px 24px",
                 border: "none",
                 borderRadius: "14px",
-                background: "#4f46e5",
+                background: "#B8720A",
                 color: "#fff",
                 cursor: "pointer",
                 fontWeight: "600",
@@ -116,7 +116,7 @@ export default function FavoritesPage() {
                 background: "#fff",
                 borderRadius: "24px",
                 overflow: "hidden",
-                border: "1px solid #e2e8f0",
+                border: "1px solid #E4E2DC",
                 boxShadow:
                   "0 8px 25px rgba(0,0,0,.06)",
                 transition: ".2s",
@@ -127,7 +127,7 @@ export default function FavoritesPage() {
               <div
                 style={{
                   background:
-                    "linear-gradient(135deg,#4f46e5,#4338ca)",
+                    "linear-gradient(135deg,#B8720A,#9C5E08)",
                   color: "#fff",
                   padding: "18px 20px",
                   display: "flex",
@@ -194,7 +194,7 @@ export default function FavoritesPage() {
                         padding: "12px",
                         border: "none",
                         borderRadius: "12px",
-                        background: "#4f46e5",
+                        background: "#B8720A",
                         color: "#fff",
                         cursor: "pointer",
                         fontWeight: "600",

@@ -1,48 +1,54 @@
-// Identité visuelle "SaaS moderne" inspirée des templates Webflow gratuits :
-// fond clair, cartes avec ombre douce, coins arrondis, accent indigo.
+// Identité visuelle "enterprise moderne" inspirée du monde du commerce
+// international : fond papier chaud, accent ocre (tampon douanier),
+// sections sombres marine, typographie affirmée. Grilles aérées,
+// rayons resserrés, ombres discrètes — sobriété assumée plutôt que
+// décor SaaS générique.
 
 export const colors = {
   background: "#FFFFFF",
-  surface: "#F8FAFC",     // fond de page (légèrement gris)
+  surface: "#F6F5F2",       // fond de page — papier chaud, pas gris-bleu
   surfaceRaised: "#FFFFFF", // cartes
 
-  textPrimary: "#0F172A",
-  textMuted: "#64748B",
+  textPrimary: "#14161C",
+  textMuted: "#6B6D76",
 
-  primary: "#4F46E5",     // indigo — CTA, liens, accents
-  primaryHover: "#4338CA",
-  primarySoft: "#EEF2FF",
+  primary: "#B8720A",       // ocre/or — CTA, liens, accents (tampon douanier)
+  primaryHover: "#9C5E08",
+  primarySoft: "#FBF0DC",
 
-  border: "#E2E8F0",
+  ink: "#0E1526",           // marine profond — sections sombres, hero
+  inkSoft: "#1B2740",
 
-  success: "#15803D",
-  successBg: "#DCFCE7",
-  info: "#1D4ED8",
-  infoBg: "#DBEAFE",
-  danger: "#DC2626",
-  dangerBg: "#FEE2E2",
-  neutral: "#475569",
-  neutralBg: "#F1F5F9",
+  border: "#E4E2DC",
+
+  success: "#1D7A4C",
+  successBg: "#E3F5E9",
+  info: "#2A5FA5",
+  infoBg: "#E7F0FA",
+  danger: "#C22D2D",
+  dangerBg: "#FBEAEA",
+  neutral: "#5B5D66",
+  neutralBg: "#F0EFEC",
 };
 
 export const spacing = {
   xs: 4,
   sm: 8,
   md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 48,
+  lg: 28,
+  xl: 40,
+  xxl: 72,
 };
 
 export const radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
+  sm: 6,
+  md: 10,
+  lg: 14,
   full: 999,
 };
 
 export const typography = {
-  display: "'Manrope', sans-serif",
+  display: "'Sora', sans-serif",
   body: "'Inter', sans-serif",
   mono: "'IBM Plex Mono', monospace",
 
@@ -50,10 +56,11 @@ export const typography = {
   fontSizeBase: 15,
   fontSizeMd: 17,
   fontSizeLg: 22,
-  fontSizeXl: 32,
+  fontSizeXl: 34,
+  fontSizeXxl: 50,
 };
 
 export const shadow = {
-  card: "0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.05)",
-  raised: "0 8px 24px rgba(15, 23, 42, 0.08)",
+  card: "0 1px 2px rgba(14, 21, 38, 0.04), 0 2px 10px rgba(14, 21, 38, 0.04)",
+  raised: "0 6px 20px rgba(14, 21, 38, 0.10)",
 };

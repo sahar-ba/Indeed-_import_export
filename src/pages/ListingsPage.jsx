@@ -181,7 +181,13 @@ const displayedItems =
   }, [filters, sortBy, showFavoritesOnly]);
   return (
     <div>
-      <h1 style={{ marginBottom: 10 }}>
+      <h1
+        style={{
+          margin: 0,
+          fontSize: "38px",
+          fontWeight: "800",
+        }}
+      >
         Catalogue des annonces
       </h1>
       {forcedType && (
@@ -208,7 +214,7 @@ const displayedItems =
       fontWeight: 600,
       background:
         !showFavoritesOnly
-          ? "#4f46e5"
+          ? "#B8720A"
           : "#f1f5f9",
       color:
         !showFavoritesOnly
@@ -239,7 +245,7 @@ const displayedItems =
       color:
         showFavoritesOnly
           ? "#fff"
-          : "#dc2626",
+          : "#C22D2D",
     }}
   >
     <FaHeart />
@@ -272,7 +278,7 @@ const displayedItems =
             width: "100%",
             padding: "12px 16px 12px 40px",
             borderRadius: "14px",
-            border: "1px solid #e2e8f0",
+            border: "1px solid #E4E2DC",
             fontSize: "14px",
             backgroundColor: "#fff",
             boxSizing: "border-box",
@@ -305,7 +311,7 @@ const displayedItems =
             style={{
               padding: "8px 12px",
               borderRadius: 8,
-              border: "1px solid #e5e7eb",
+              border: "1px solid #E4E2DC",
               fontSize: 14,
               backgroundColor: "#fff",
             }}

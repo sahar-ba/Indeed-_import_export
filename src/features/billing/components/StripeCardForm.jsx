@@ -12,11 +12,11 @@ const CARD_ELEMENT_OPTIONS = {
   style: {
     base: {
       fontSize: "15px",
-      color: "#111827",
+      color: "#14161C",
       fontFamily: "'Inter', sans-serif",
       "::placeholder": { color: "#9ca3af" },
     },
-    invalid: { color: "#dc2626" },
+    invalid: { color: "#C22D2D" },
   },
 };
 
@@ -92,7 +92,7 @@ export default function StripeCardForm({ planId, price, onSuccess }) {
             width: "100%",
             padding: "12px 14px",
             borderRadius: 10,
-            border: "1px solid #d1d5db",
+            border: "1px solid #E4E2DC",
             fontSize: 14,
             boxSizing: "border-box",
           }}
@@ -103,7 +103,7 @@ export default function StripeCardForm({ planId, price, onSuccess }) {
         style={{
           padding: "14px",
           borderRadius: 10,
-          border: `1px solid ${error ? "#dc2626" : "#d1d5db"}`,
+          border: `1px solid ${error ? "#C22D2D" : "#E4E2DC"}`,
           marginBottom: 12,
           backgroundColor: "#fff",
         }}
@@ -112,15 +112,15 @@ export default function StripeCardForm({ planId, price, onSuccess }) {
       </div>
 
       {error && (
-        <p style={{ color: "#dc2626", fontSize: 13, margin: "0 0 12px" }}>{error}</p>
+        <p style={{ color: "#C22D2D", fontSize: 13, margin: "0 0 12px" }}>{error}</p>
       )}
 
       {/* Aide-mémoire pour tester : cartes de test officielles Stripe,
           utilisables uniquement en mode test (clé pk_test_...). */}
       <div
         style={{
-          backgroundColor: "#f8fafc",
-          border: "1px solid #e2e8f0",
+          backgroundColor: "#F6F5F2",
+          border: "1px solid #E4E2DC",
           borderRadius: 10,
           padding: "12px 14px",
           marginBottom: 20,
@@ -148,7 +148,7 @@ export default function StripeCardForm({ planId, price, onSuccess }) {
           padding: 16,
           border: "none",
           borderRadius: 14,
-          background: "linear-gradient(135deg,#4f46e5,#4338ca)",
+          background: "linear-gradient(135deg,#B8720A,#9C5E08)",
           color: "#fff",
           fontWeight: 700,
           fontSize: 16,

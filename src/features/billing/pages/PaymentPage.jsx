@@ -100,7 +100,7 @@ export default function PaymentPage() {
               fontFamily: "monospace",
               fontSize: 20,
               fontWeight: 800,
-              color: "#111827",
+              color: "#14161C",
               letterSpacing: "0.05em",
             }}
           >
@@ -118,7 +118,7 @@ export default function PaymentPage() {
               padding: "12px 24px",
               border: "none",
               borderRadius: 12,
-              background: "linear-gradient(135deg,#4f46e5,#4338ca)",
+              background: "linear-gradient(135deg,#B8720A,#9C5E08)",
               color: "#fff",
               fontWeight: 700,
               cursor: "pointer",
@@ -159,7 +159,7 @@ export default function PaymentPage() {
               padding: "12px 24px",
               border: "none",
               borderRadius: 12,
-              background: "linear-gradient(135deg,#4f46e5,#4338ca)",
+              background: "linear-gradient(135deg,#B8720A,#9C5E08)",
               color: "#fff",
               fontWeight: 700,
               cursor: "pointer",
@@ -202,7 +202,7 @@ export default function PaymentPage() {
           marginBottom: 4,
         }}
       >
-        <ShieldCheck size={22} color="#4f46e5" />
+        <ShieldCheck size={22} color="#B8720A" />
         <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Paiement sécurisé</h1>
       </div>
       <p style={{ color: "#6b7280", marginBottom: 24 }}>
@@ -212,8 +212,8 @@ export default function PaymentPage() {
       {/* Récapitulatif du plan choisi */}
       <div
         style={{
-          background: "#f8fafc",
-          border: "1px solid #e2e8f0",
+          background: "#F6F5F2",
+          border: "1px solid #E4E2DC",
           borderRadius: 16,
           padding: "16px 20px",
           display: "flex",
@@ -223,10 +223,10 @@ export default function PaymentPage() {
         }}
       >
         <div>
-          <p style={{ margin: 0, fontWeight: 700, color: "#111827" }}>{plan.title}</p>
+          <p style={{ margin: 0, fontWeight: 700, color: "#14161C" }}>{plan.title}</p>
           <p style={{ margin: 0, fontSize: 13, color: "#6b7280" }}>{plan.subtitle}</p>
         </div>
-        <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "#4f46e5" }}>{plan.price}</p>
+        <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "#B8720A" }}>{plan.price}</p>
       </div>
 
       {/* Choix du mode de paiement */}
@@ -246,17 +246,17 @@ export default function PaymentPage() {
                 gap: 6,
                 padding: "14px 8px",
                 borderRadius: 12,
-                border: selected ? "2px solid #4f46e5" : "1px solid #e5e7eb",
-                backgroundColor: selected ? "#eef2ff" : "#fff",
+                border: selected ? "2px solid #B8720A" : "1px solid #E4E2DC",
+                backgroundColor: selected ? "#FBF0DC" : "#fff",
                 cursor: "pointer",
               }}
             >
-              <Icon size={20} color={selected ? "#4f46e5" : "#6b7280"} />
+              <Icon size={20} color={selected ? "#B8720A" : "#6b7280"} />
               <span
                 style={{
                   fontSize: 12,
                   fontWeight: 600,
-                  color: selected ? "#4f46e5" : "#374151",
+                  color: selected ? "#B8720A" : "#374151",
                   textAlign: "center",
                 }}
               >
@@ -280,8 +280,8 @@ export default function PaymentPage() {
           {method === "paypal" && (
             <div
               style={{
-                backgroundColor: "#f8fafc",
-                border: "1px solid #e2e8f0",
+                backgroundColor: "#F6F5F2",
+                border: "1px solid #E4E2DC",
                 borderRadius: 12,
                 padding: 16,
                 marginBottom: 20,
@@ -296,8 +296,8 @@ export default function PaymentPage() {
           {method === "bank" && (
             <div
               style={{
-                backgroundColor: "#f8fafc",
-                border: "1px solid #e2e8f0",
+                backgroundColor: "#F6F5F2",
+                border: "1px solid #E4E2DC",
                 borderRadius: 12,
                 padding: 16,
                 marginBottom: 20,
@@ -321,7 +321,7 @@ export default function PaymentPage() {
               padding: 16,
               border: "none",
               borderRadius: 14,
-              background: "linear-gradient(135deg,#4f46e5,#4338ca)",
+              background: "linear-gradient(135deg,#B8720A,#9C5E08)",
               color: "#fff",
               fontWeight: 700,
               fontSize: 16,

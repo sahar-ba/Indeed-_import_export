@@ -182,7 +182,7 @@ const isMyListing =
           style={{
             border: "none",
             background: "none",
-            color: "#4f46e5",
+            color: "#B8720A",
             fontWeight: "600",
             cursor: "pointer",
             marginBottom: "25px",
@@ -217,7 +217,7 @@ const isMyListing =
                   style={{
                     fontSize: "42px",
                     fontWeight: "700",
-                    color: "#0f172a",
+                    color: "#14161C",
                     marginBottom: "10px",
                   }}
                 >
@@ -226,7 +226,7 @@ const isMyListing =
 
                 <p
                   style={{
-                    color: "#64748b",
+                    color: "#6B6D76",
                     margin: 0,
                   }}
                 >
@@ -310,7 +310,7 @@ const isMyListing =
                     style={{
                       fontSize: "22px",
                       marginBottom: "20px",
-                      color: "#0f172a",
+                      color: "#14161C",
                     }}
                   >
                     📎 Documents associés (
@@ -331,12 +331,12 @@ const isMyListing =
                           key={index}
                           style={{
                             border:
-                              "1px solid #e2e8f0",
+                              "1px solid #E4E2DC",
                             borderRadius:
                               "16px",
                             padding: "18px",
                             background:
-                              "#f8fafc",
+                              "#F6F5F2",
                           }}
                         >
                           {/* TYPE */}
@@ -348,11 +348,11 @@ const isMyListing =
                               padding:
                                 "6px 10px",
                               background:
-                                "#eef2ff",
+                                "#FBF0DC",
                               borderRadius:
                                 "999px",
                               color:
-                                "#4f46e5",
+                                "#B8720A",
                               fontSize:
                                 "13px",
                               fontWeight:
@@ -375,7 +375,7 @@ const isMyListing =
                               fontWeight:
                                 "700",
                               color:
-                                "#0f172a",
+                                "#14161C",
                               marginBottom:
                                 "8px",
                             }}
@@ -389,7 +389,7 @@ const isMyListing =
                           <div
                             style={{
                               color:
-                                "#64748b",
+                                "#6B6D76",
                               fontSize:
                                 "14px",
                               wordBreak:
@@ -425,7 +425,7 @@ const isMyListing =
                   style={{
                     fontSize: "22px",
                     marginBottom: "20px",
-                    color: "#0f172a",
+                    color: "#14161C",
                   }}
                 >
                   🤝 Contacter le propriétaire
@@ -433,7 +433,7 @@ const isMyListing =
 
                 <p
                   style={{
-                    color: "#64748b",
+                    color: "#6B6D76",
                     marginBottom: "25px",
                   }}
                 >
@@ -450,8 +450,8 @@ const isMyListing =
                       gap: "16px",
                       padding: "18px 20px",
                       borderRadius: "16px",
-                      background: "#f8fafc",
-                      border: "1px solid #e2e8f0",
+                      background: "#F6F5F2",
+                      border: "1px solid #E4E2DC",
                       marginBottom: "25px",
                     }}
                   >
@@ -461,7 +461,7 @@ const isMyListing =
                         height: "48px",
                         borderRadius: "50%",
                         background:
-                          "linear-gradient(135deg,#4f46e5,#4338ca)",
+                          "linear-gradient(135deg,#B8720A,#9C5E08)",
                         color: "#fff",
                         display: "flex",
                         alignItems: "center",
@@ -474,7 +474,7 @@ const isMyListing =
                     </div>
 
                     {isOwnerAccountLoading ? (
-                      <p style={{ margin: 0, color: "#64748b" }}>
+                      <p style={{ margin: 0, color: "#6B6D76" }}>
                         Chargement des informations du compte...
                       </p>
                     ) : (
@@ -490,7 +490,7 @@ const isMyListing =
                           <strong
                             style={{
                               fontSize: "16px",
-                              color: "#0f172a",
+                              color: "#14161C",
                             }}
                           >
                             {ownerAccount.companyName}
@@ -503,8 +503,8 @@ const isMyListing =
                               gap: "6px",
                               padding: "3px 10px",
                               borderRadius: "999px",
-                              background: "#eef2ff",
-                              color: "#4f46e5",
+                              background: "#FBF0DC",
+                              color: "#B8720A",
                               fontSize: "12px",
                               fontWeight: 700,
                             }}
@@ -530,7 +530,7 @@ const isMyListing =
                         <p
                           style={{
                             margin: "6px 0 0",
-                            color: "#64748b",
+                            color: "#6B6D76",
                             fontSize: "14px",
                           }}
                         >
@@ -561,7 +561,7 @@ const isMyListing =
       padding: "14px 24px",
       border: "none",
       borderRadius: "12px",
-      background: "#4f46e5",
+      background: "#B8720A",
       color: "white",
       fontWeight: "600",
       cursor: isContactingLoading
@@ -588,16 +588,16 @@ const isMyListing =
       padding: "14px 24px",
       border: `1px solid ${
         isFavorite
-          ? "#dc2626"
-          : "#e2e8f0"
+          ? "#C22D2D"
+          : "#E4E2DC"
       }`,
       borderRadius: "12px",
       background: isFavorite
         ? "#fef2f2"
         : "#ffffff",
       color: isFavorite
-        ? "#dc2626"
-        : "#0f172a",
+        ? "#C22D2D"
+        : "#14161C",
       fontWeight: "600",
       cursor:
         isFavoriteLoading
@@ -627,7 +627,7 @@ const isMyListing =
                 {favoriteError && (
                   <p
                     style={{
-                      color: "#dc2626",
+                      color: "#C22D2D",
                       marginTop: "12px",
                       fontSize: "14px",
                     }}

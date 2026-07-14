@@ -11,9 +11,10 @@ export const ACCEPTED_MIME_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
+  "text/plain",
 ];
 
-export const ACCEPTED_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png", ".webp"];
+export const ACCEPTED_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png", ".webp", ".txt"];
 
 export function isAcceptedFile(file) {
   const name = file.name?.toLowerCase() || "";
@@ -55,6 +56,7 @@ export default function FileDropzone({
   files,
   onChange,
   showValidation = false,
+  documentTypes = DOCUMENT_TYPES,
 }) {
   const inputRef = useRef(null);
 
@@ -72,7 +74,7 @@ export default function FileDropzone({
     incoming.forEach((file) => {
       if (!isAcceptedFile(file)) {
         rejected.push(
-          `${file.name} : type de fichier non autorisé (PDF ou image uniquement)`
+          `${file.name} : type de fichier non autorisé (PDF, image ou texte uniquement)`
         );
         return;
       }
@@ -174,21 +176,21 @@ export default function FileDropzone({
         style={{
           border: `2px dashed ${
             dragOver
-              ? "#4f46e5"
-              : "#d1d5db"
+              ? "#B8720A"
+              : "#E4E2DC"
           }`,
           borderRadius: 16,
           padding: "28px 20px",
           textAlign: "center",
           cursor: "pointer",
           backgroundColor: dragOver
-            ? "#eef2ff"
+            ? "#FBF0DC"
             : "#f9fafb",
         }}
       >
         <Paperclip
           size={28}
-          color="#4f46e5"
+          color="#B8720A"
         />
 
         <p
@@ -219,7 +221,7 @@ export default function FileDropzone({
             marginTop: 4,
           }}
         >
-          Formats acceptés : PDF, JPG, PNG, WEBP — 10 Mo max par fichier
+          Formats acceptés : PDF, JPG, PNG, WEBP, TXT — 10 Mo max par fichier
         </p>
 
         <input
@@ -251,7 +253,7 @@ export default function FileDropzone({
             <p
               key={i}
               style={{
-                color: "#dc2626",
+                color: "#C22D2D",
                 fontSize: 13,
                 margin: i === 0 ? 0 : "4px 0 0",
               }}
@@ -284,10 +286,10 @@ export default function FileDropzone({
                 key={`${file.name}-${index}`}
                 style={{
                   background:
-                    "#f8fafc",
+                    "#F6F5F2",
                   border: isIncomplete
-                    ? "1px solid #dc2626"
-                    : "1px solid #e2e8f0",
+                    ? "1px solid #C22D2D"
+                    : "1px solid #E4E2DC",
                   borderRadius:
                     "14px",
                   padding: "16px",
@@ -318,7 +320,7 @@ export default function FileDropzone({
                   >
                     <FileText
                       size={18}
-                      color="#4f46e5"
+                      color="#B8720A"
                     />
 
                     <span>
@@ -384,7 +386,7 @@ export default function FileDropzone({
                     marginBottom:
                       "14px",
                     border:
-                      "1px solid #d1d5db",
+                      "1px solid #E4E2DC",
                     borderRadius:
                       "10px",
                     boxSizing:
@@ -402,7 +404,7 @@ export default function FileDropzone({
                     gap: "8px",
                   }}
                 >
-                  {DOCUMENT_TYPES.map(
+                  {documentTypes.map(
                     (type) => {
                       const selected =
                         file.type ===
@@ -424,17 +426,17 @@ export default function FileDropzone({
                           style={{
                             border:
                               selected
-                                ? "2px solid #4f46e5"
-                                : "1px solid #d1d5db",
+                                ? "2px solid #B8720A"
+                                : "1px solid #E4E2DC",
 
                             background:
                               selected
-                                ? "#eef2ff"
+                                ? "#FBF0DC"
                                 : "#ffffff",
 
                             color:
                               selected
-                                ? "#4f46e5"
+                                ? "#B8720A"
                                 : "#374151",
 
                             borderRadius:
@@ -467,7 +469,7 @@ export default function FileDropzone({
                 {isIncomplete && (
                   <p
                     style={{
-                      color: "#dc2626",
+                      color: "#C22D2D",
                       fontSize: 13,
                       marginTop: 10,
                       marginBottom: 0,

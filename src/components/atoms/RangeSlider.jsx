@@ -182,7 +182,7 @@ function Handle({ label, percent, min, max, value, isActive, onPointerDown, onKe
         background: colors.primary,
         border: "2px solid #fff",
         boxShadow: isActive
-          ? "0 2px 8px rgba(79,70,229,0.5)"
+          ? "0 2px 8px rgba(184,114,10,0.45)"
           : "0 1px 3px rgba(0,0,0,0.25)",
         cursor: isActive ? "grabbing" : "grab",
         touchAction: "none",

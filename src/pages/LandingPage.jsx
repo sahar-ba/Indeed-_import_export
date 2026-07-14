@@ -1,9 +1,30 @@
 import { Link } from "react-router-dom";
 import Button from "../components/atoms/Button";
+import Reveal from "../components/atoms/Reveal";
 import StepCard from "../components/organisms/StepCard";
 import CategoryGrid from "../components/organisms/CategoryGrid";
+import FeatureGrid from "../components/organisms/FeatureGrid";
+import TrustMarquee from "../components/organisms/TrustMarquee";
 import TradeRouteIllustration from "../components/organisms/TradeRouteIllustration";
-import { colors, spacing } from "../styles/tokens";
+import { colors, spacing, typography } from "../styles/tokens";
+
+const STEPS = [
+  {
+    icon: "🚀",
+    title: "Créez votre compte",
+    description: "Inscrivez-vous en tant qu'importateur ou exportateur et complétez votre profil professionnel.",
+  },
+  {
+    icon: "📦",
+    title: "Publiez votre annonce",
+    description: "Déposez une offre d'exportation ou une demande d'importation détaillée en quelques minutes.",
+  },
+  {
+    icon: "🤝",
+    title: "Trouvez un partenaire",
+    description: "Identifiez les meilleures opportunités commerciales et échangez directement avec les entreprises.",
+  },
+];
 
 export default function LandingPage() {
   return (
@@ -18,13 +39,14 @@ export default function LandingPage() {
           marginLeft: "-50vw",
           marginRight: "-50vw",
           width: "100vw",
+          backgroundColor: colors.ink,
           backgroundImage:
-            "linear-gradient(120deg,#0F172A 0%, #1E1B4B 100%)",
+            `linear-gradient(160deg, ${colors.ink} 0%, ${colors.inkSoft} 100%)`,
           overflow: "hidden",
         }}
       >
         <div
-          className="grid-2-col"
+          className="grid-hero"
           style={{
             maxWidth: 1200,
             margin: "0 auto",
@@ -34,47 +56,31 @@ export default function LandingPage() {
             minHeight: 520,
           }}
         >
-          <div
-            style={{
-              position: "relative",
-              paddingLeft: 28,
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                left: 0,
-                top: -12,
-                bottom: 40,
-                width: 10,
-                borderLeft: "3px solid #818CF8",
-                borderTop: "3px solid #818CF8",
-                borderBottom: "3px solid #818CF8",
-                opacity: 0.8,
-              }}
-            />
+          <div style={{ position: "relative" }}>
+            
 
             <h1
+              className="hero-fade-2"
               style={{
-                fontSize: 48,
+                fontFamily: typography.display,
+                fontSize: 52,
                 fontWeight: 800,
                 color: "#fff",
-                lineHeight: 1.1,
+                lineHeight: 1.08,
+                letterSpacing: "-0.02em",
                 marginBottom: spacing.md,
               }}
             >
-              Trouvez Le
-              <br />
-              Partenaire Commercial
-              <br />
-              Idéal
+              Trouvez le partenaire commercial idéal
             </h1>
 
             <p
+              className="hero-fade-3"
               style={{
+                fontFamily: typography.body,
                 fontSize: 18,
-                color: "#C7CCE8",
-                maxWidth: 500,
+                color: "#B9BECF",
+                maxWidth: 460,
                 marginBottom: spacing.lg,
                 lineHeight: 1.7,
               }}
@@ -85,6 +91,7 @@ export default function LandingPage() {
             </p>
 
             <div
+              className="hero-fade-4"
               style={{
                 display: "flex",
                 gap: spacing.md,
@@ -105,98 +112,94 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div
-            style={{
-              height: 350,
-            }}
-          >
+          <div className="hero-illustration hero-fade-3" style={{ height: 350 }}>
             <TradeRouteIllustration />
           </div>
         </div>
       </div>
 
+      {/* BANDEAU DE CONFIANCE */}
+      <TrustMarquee />
+
       {/* SECTEURS */}
 
-      <div
-        style={{
-          marginTop: spacing.xxl,
-        }}
-      >
-        <div
-          style={{
-            textAlign: "center",
-            marginBottom: "30px",
-          }}
-        >
+      <div style={{ marginTop: spacing.xxl }}>
+        <Reveal style={{ textAlign: "center", marginBottom: "36px" }}>
+          <span className="eyebrow">Catalogue</span>
           <h2
             style={{
-              fontSize: 38,
+              fontFamily: typography.display,
+              fontSize: 36,
+              fontWeight: 800,
               color: colors.textPrimary,
-              marginBottom: "10px",
+              letterSpacing: "-0.01em",
             }}
           >
             Explorer par secteur
           </h2>
+        </Reveal>
 
-        </div>
+        <Reveal delay={100}>
+          <CategoryGrid />
+        </Reveal>
+      </div>
 
-        <CategoryGrid />
+      {/* POURQUOI INDEED² */}
+
+      <div style={{ marginTop: spacing.xxl }}>
+        <Reveal style={{ textAlign: "center", marginBottom: "36px" }}>
+          <span className="eyebrow">Pourquoi Indeed²</span>
+          <h2
+            style={{
+              fontFamily: typography.display,
+              fontSize: 36,
+              fontWeight: 800,
+              color: colors.textPrimary,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Tout ce qu'il faut pour commercer sereinement
+          </h2>
+        </Reveal>
+
+        <FeatureGrid />
       </div>
 
       {/* COMMENT ÇA MARCHE */}
 
-      <div
-        style={{
-          marginTop: spacing.xxl,
-          marginBottom: spacing.xxl,
-        }}
-      >
-        <div
-          style={{
-            textAlign: "center",
-            marginBottom: "50px",
-          }}
-        >
+      <div style={{ marginTop: spacing.xxl, marginBottom: spacing.xxl }}>
+        <Reveal style={{ textAlign: "center", marginBottom: "50px" }}>
+          <span className="eyebrow">Fonctionnement</span>
           <h2
             style={{
-              fontSize: "42px",
+              fontFamily: typography.display,
+              fontSize: "40px",
               fontWeight: 800,
               color: colors.textPrimary,
+              letterSpacing: "-0.01em",
               marginBottom: "16px",
             }}
           >
             Comment fonctionne Indeed² ?
           </h2>
-        </div>
+        </Reveal>
 
-        {/* VERSION RESPONSIVE */}
-
+        {/* Étapes numérotées : l'ordre porte une vraie information ici
+            (il faut créer un compte avant de publier, publier avant
+            de matcher), donc les jalons 01/02/03 sont justifiés. */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(260px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
             gap: "24px",
             alignItems: "stretch",
           }}
         >
-          <StepCard
-            icon="🚀"
-            title="Créez votre compte"
-            description="Inscrivez-vous en tant qu'importateur ou exportateur et complétez votre profil professionnel."
-          />
-
-          <StepCard
-            icon="📦"
-            title="Publiez votre annonce"
-            description="Déposez une offre d'exportation ou une demande d'importation détaillée en quelques minutes."
-          />
-
-          <StepCard
-            icon="🤝"
-            title="Trouvez un partenaire"
-            description="Identifiez les meilleures opportunités commerciales et échangez directement avec les entreprises."
-          />
+          {STEPS.map((step, i) => (
+            <Reveal key={step.title} delay={i * 120} style={{ height: "100%" }}>
+              <StepCard step={i + 1} {...step} />
+            </Reveal>
+          ))}
         </div>
       </div>
     </div>

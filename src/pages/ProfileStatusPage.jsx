@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { RefreshCw, Edit3, ArrowRight } from "lucide-react";
 import StatusBadge from "../components/molecules/StatusBadge";
+import Reveal from "../components/atoms/Reveal";
 import { useAuth } from "../context/AuthContext";
 import { colors, radius, shadow, spacing, typography } from "../styles/tokens";
 
@@ -33,83 +34,95 @@ export default function ProfileStatusPage() {
 
   return (
     <div style={{ maxWidth: 640, margin: "0 auto" }}>
-      <h1
-        style={{
-          fontSize: typography.fontSizeXl,
-          fontWeight: 800,
-          marginBottom: spacing.lg,
-          color: colors.textPrimary,
-        }}
-      >
-        Statut de votre profil
-      </h1>
-
-      <div
-        style={{
-          background: colors.surfaceRaised,
-          border: `1px solid ${colors.border}`,
-          borderRadius: radius.lg,
-          boxShadow: shadow.card,
-          padding: spacing.xl,
-          textAlign: "center",
-        }}
-      >
-        <div style={{ fontSize: 56, marginBottom: spacing.md }}>{content.icon}</div>
-
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: spacing.md }}>
-          <StatusBadge status={status} />
-        </div>
-
-        <h2
+      <Reveal>
+        <span className="eyebrow">Vérification</span>
+        <h1
           style={{
-            fontSize: typography.fontSizeLg,
-            marginBottom: spacing.sm,
+            fontFamily: typography.display,
+            fontSize: typography.fontSizeXl,
+            fontWeight: 800,
+            letterSpacing: "-0.01em",
+            marginBottom: spacing.lg,
             color: colors.textPrimary,
           }}
         >
-          {content.title}
-        </h2>
+          Statut de votre profil
+        </h1>
+      </Reveal>
 
-        <p
+      <Reveal delay={100}>
+        <div
           style={{
-            color: colors.textMuted,
-            lineHeight: 1.7,
-            marginBottom: spacing.lg,
+            background: colors.surfaceRaised,
+            border: `1px solid ${colors.border}`,
+            borderRadius: radius.lg,
+            boxShadow: shadow.card,
+            padding: spacing.xl,
+            textAlign: "center",
           }}
         >
-          {content.message}
-        </p>
+          <div style={{ fontSize: 56, marginBottom: spacing.md }}>{content.icon}</div>
 
-        {status === "rejected" && (
-          <button
-            onClick={() => navigate("/profile/complete")}
-            style={actionButtonStyle(colors.danger)}
-          >
-            <Edit3 size={16} />
-            Modifier et resoumettre mon profil
-          </button>
-        )}
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: spacing.md }}>
+            <StatusBadge status={status} />
+          </div>
 
-        {status === "pending" && (
-          <button
-            onClick={() => window.location.reload()}
-            style={actionButtonStyle(colors.neutral)}
+          <h2
+            style={{
+              fontFamily: typography.display,
+              fontSize: typography.fontSizeLg,
+              fontWeight: 700,
+              marginBottom: spacing.sm,
+              color: colors.textPrimary,
+            }}
           >
-            <RefreshCw size={16} />
-            Rafraîchir le statut
-          </button>
-        )}
+            {content.title}
+          </h2>
 
-        {status === "validated" && (
-          <button
-            onClick={() => navigate("/listings/catalog")}
-            style={actionButtonStyle(colors.primary)}
+          <p
+            style={{
+              color: colors.textMuted,
+              lineHeight: 1.7,
+              marginBottom: spacing.lg,
+            }}
           >
-            Aller au catalogue
-            <ArrowRight size={16} />
-          </button>
-        )}
-      </div>
+            {content.message}
+          </p>
+
+          {status === "rejected" && (
+            <button
+              className="hover-lift"
+              onClick={() => navigate("/profile/complete")}
+              style={actionButtonStyle(colors.danger)}
+            >
+              <Edit3 size={16} />
+              Modifier et resoumettre mon profil
+            </button>
+          )}
+
+          {status === "pending" && (
+            <button
+              className="hover-lift"
+              onClick={() => window.location.reload()}
+              style={actionButtonStyle(colors.neutral)}
+            >
+              <RefreshCw size={16} />
+              Rafraîchir le statut
+            </button>
+          )}
+
+          {status === "validated" && (
+            <button
+              className="hover-lift"
+              onClick={() => navigate("/listings/catalog")}
+              style={actionButtonStyle(colors.primary)}
+            >
+              Aller au catalogue
+              <ArrowRight size={16} />
+            </button>
+          )}
+        </div>
+      </Reveal>
     </div>
   );
 }
@@ -124,8 +137,10 @@ function actionButtonStyle(color) {
     borderRadius: radius.md,
     backgroundColor: color,
     color: "#fff",
+    fontFamily: typography.display,
     fontWeight: 700,
     fontSize: typography.fontSizeBase,
     cursor: "pointer",
+    transition: "background-color 0.15s ease",
   };
 }

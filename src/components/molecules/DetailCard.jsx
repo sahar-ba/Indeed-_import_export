@@ -1,3 +1,5 @@
+import { colors, radius, spacing, shadow, typography } from "../../styles/tokens";
+
 export default function DetailCard({
   icon,
   title,
@@ -6,18 +8,18 @@ export default function DetailCard({
   return (
     <div
       style={{
-        background: "#ffffff",
-        borderRadius: "16px",
-        padding: "20px",
+        background: colors.surfaceRaised,
+        borderRadius: radius.md,
+        padding: spacing.md,
         textAlign: "center",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
-        border: "1px solid #f1f5f9",
+        boxShadow: shadow.card,
+        border: `1px solid ${colors.border}`,
       }}
     >
       <div
         style={{
           fontSize: "26px",
-          color: "#4f6ef7",
+          color: colors.primary,
           marginBottom: "10px",
         }}
       >
@@ -26,12 +28,13 @@ export default function DetailCard({
 
       <h3
         style={{
-          color: "#64748b",
-          fontSize: "13px",
-          fontWeight: "600",
+          color: colors.textMuted,
+          fontFamily: typography.body,
+          fontSize: "12px",
+          fontWeight: "700",
           marginBottom: "8px",
           textTransform: "uppercase",
-          letterSpacing: "0.5px",
+          letterSpacing: "0.06em",
         }}
       >
         {title}
@@ -39,8 +42,9 @@ export default function DetailCard({
 
       <p
         style={{
-          color: "#0f172a",
-          fontSize: "18px",
+          color: colors.textPrimary,
+          fontFamily: typography.display,
+          fontSize: "19px",
           fontWeight: "700",
           margin: 0,
         }}

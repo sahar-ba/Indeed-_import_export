@@ -8,6 +8,7 @@ import Select from "../components/atoms/Select";
 import Button from "../components/atoms/Button";
 import ErrorMessage from "../components/atoms/ErrorMessage";
 import Textarea from "../components/atoms/Textarea";
+import Reveal from "../components/atoms/Reveal";
 import FileDropzone, { DOCUMENT_TYPES } from "../components/molecules/FileDropzone";
 
 import { completeProfile } from "../api/auth";
@@ -155,19 +156,22 @@ export default function ProfileCompletionPage() {
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(180deg,#f8fafc 0%,#eef2ff 100%)",
+        background: "linear-gradient(180deg,#F6F5F2 0%,#FBF0DC 100%)",
         padding: "60px 20px",
       }}
     >
       <div style={{ maxWidth: "900px", margin: "0 auto" }}>
         {/* HEADER */}
-        <div style={{ textAlign: "center", marginBottom: "32px" }}>
-          <div style={{ fontSize: "60px", marginBottom: "12px" }}>🏢</div>
+        <Reveal style={{ textAlign: "center", marginBottom: "32px" }}>
+          <div style={{ fontSize: "56px", marginBottom: "12px" }}>🏢</div>
+          <span className="eyebrow">Étape obligatoire</span>
           <h1
             style={{
-              fontSize: "44px",
+              fontFamily: typography.display,
+              fontSize: "40px",
               fontWeight: "800",
-              color: "#111827",
+              letterSpacing: "-0.01em",
+              color: colors.textPrimary,
               marginBottom: "12px",
             }}
           >
@@ -177,15 +181,16 @@ export default function ProfileCompletionPage() {
             style={{
               maxWidth: "700px",
               margin: "0 auto",
-              color: "#6b7280",
-              fontSize: "18px",
+              color: colors.textMuted,
+              fontFamily: typography.body,
+              fontSize: "17px",
               lineHeight: 1.7,
             }}
           >
             Fournissez les informations de votre société afin d'accéder aux
             meilleures opportunités d'importation et d'exportation.
           </p>
-        </div>
+        </Reveal>
 
         {/* INDICATEUR DE PROGRESSION */}
         <div
@@ -252,12 +257,13 @@ export default function ProfileCompletionPage() {
         <div
           style={{
             background: "#ffffff",
-            borderRadius: "28px",
+            borderRadius: "24px",
             padding: "40px",
-            boxShadow: "0 20px 60px rgba(15,23,42,0.08)",
+            boxShadow: "0 20px 60px rgba(14,21,38,0.08)",
           }}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
+            <div key={currentStep} className="hero-fade-1">
             {/* ÉTAPE 1 : ENTREPRISE */}
             {currentStep === 1 && (
               <>
@@ -311,15 +317,15 @@ export default function ProfileCompletionPage() {
                 style={{
                   padding: "18px",
                   borderRadius: "16px",
-                  background: "#f8fafc",
+                  background: "#F6F5F2",
                   marginBottom: "20px",
-                  border: "1px solid #e5e7eb",
+                  border: "1px solid #E4E2DC",
                 }}
               >
                 <h3 style={{ marginTop: 0, marginBottom: "10px", fontSize: "16px" }}>
                   ✅ Certifications
                 </h3>
-                <p style={{ color: "#6b7280", marginTop: 0, fontSize: "14px" }}>
+                <p style={{ color: "#6B6D76", marginTop: 0, fontSize: "14px" }}>
                   Exemple : ISO 9001, BIO, CE, HACCP...
                 </p>
                 <FormField
@@ -356,7 +362,7 @@ export default function ProfileCompletionPage() {
                 >
                   📝 Description de l'entreprise
                 </label>
-                <p style={{ color: "#6b7280", marginTop: 0, marginBottom: 10, fontSize: "14px" }}>
+                <p style={{ color: "#6B6D76", marginTop: 0, marginBottom: 10, fontSize: "14px" }}>
                   Présentez votre activité, vos produits phares et ce qui vous distingue
                   (20 caractères minimum).
                 </p>
@@ -374,6 +380,7 @@ export default function ProfileCompletionPage() {
                 />
               </div>
             )}
+            </div>
 
             {/* ERREUR */}
             <ErrorMessage>{submitError}</ErrorMessage>

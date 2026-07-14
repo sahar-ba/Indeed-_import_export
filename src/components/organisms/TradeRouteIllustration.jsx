@@ -11,8 +11,8 @@ export default function TradeRouteIllustration() {
     >
       <defs>
         <radialGradient id="globeGlow" cx="50%" cy="45%" r="65%">
-          <stop offset="0%" stopColor="#6366F1" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#6366F1" stopOpacity="0" />
+          <stop offset="0%" stopColor="#E3A548" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#E3A548" stopOpacity="0" />
         </radialGradient>
       </defs>
 
@@ -36,7 +36,7 @@ export default function TradeRouteIllustration() {
               cx={x}
               cy={y}
               r={1.6}
-              fill="#A5B4FC"
+              fill="#E3A548"
               opacity={0.55}
             />
           );
@@ -53,7 +53,7 @@ export default function TradeRouteIllustration() {
           key={i}
           d={route.d}
           fill="none"
-          stroke="#818CF8"
+          stroke="#E3A548"
           strokeWidth="1.5"
           strokeDasharray="6 6"
           opacity="0.7"
@@ -78,7 +78,7 @@ export default function TradeRouteIllustration() {
         [100, 190],
         [500, 240],
       ].map(([cx, cy], i) => (
-        <circle key={i} cx={cx} cy={cy} r="5" fill="#F8FAFC">
+        <circle key={i} cx={cx} cy={cy} r="5" fill="#0E1526">
           <animate
             attributeName="r"
             values="5;7;5"

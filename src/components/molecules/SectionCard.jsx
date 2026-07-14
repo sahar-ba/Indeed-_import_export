@@ -1,21 +1,25 @@
+import { colors, radius, spacing, shadow, typography } from "../../styles/tokens";
+
 export default function SectionCard({ title, children }) {
   return (
     <div
       style={{
-        background: "#ffffff",
-        borderRadius: "24px",
-        padding: "30px",
-        marginBottom: "24px",
-        boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+        background: colors.surfaceRaised,
+        border: `1px solid ${colors.border}`,
+        borderRadius: radius.lg,
+        padding: spacing.lg,
+        marginBottom: spacing.md,
+        boxShadow: shadow.card,
       }}
     >
       {title && (
         <h2
           style={{
-            fontSize: "22px",
-            fontWeight: "700",
-            color: "#111827",
-            marginBottom: "24px",
+            fontFamily: typography.display,
+            fontSize: typography.fontSizeLg,
+            fontWeight: 700,
+            color: colors.textPrimary,
+            marginBottom: spacing.md,
           }}
         >
           {title}

@@ -64,7 +64,7 @@ export default function RegisterPage() {
           style={{
             textAlign: "center",
             marginBottom: "10px",
-            color: "#111827",
+            color: "#14161C",
           }}
         >
           Créer un compte
@@ -106,7 +106,7 @@ export default function RegisterPage() {
               style={{
                 width: "100%",
                 padding: "14px",
-                border: `1px solid ${errors.email ? "#dc2626" : "#ddd"}`,
+                border: `1px solid ${errors.email ? "#C22D2D" : "#ddd"}`,
                 borderRadius: "12px",
                 fontSize: "15px",
               }}
@@ -115,7 +115,7 @@ export default function RegisterPage() {
             {errors.email && (
               <p
                 style={{
-                  color: "#dc2626",
+                  color: "#C22D2D",
                   marginTop: "5px",
                   fontSize: "14px",
                 }}
@@ -150,7 +150,7 @@ export default function RegisterPage() {
               style={{
                 width: "100%",
                 padding: "14px",
-                border: `1px solid ${errors.password ? "#dc2626" : "#ddd"}`,
+                border: `1px solid ${errors.password ? "#C22D2D" : "#ddd"}`,
                 borderRadius: "12px",
                 fontSize: "15px",
               }}
@@ -159,7 +159,7 @@ export default function RegisterPage() {
             {errors.password && (
               <p
                 style={{
-                  color: "#dc2626",
+                  color: "#C22D2D",
                   marginTop: "5px",
                   fontSize: "14px",
                 }}
@@ -173,7 +173,7 @@ export default function RegisterPage() {
           <h3
             style={{
               marginBottom: "12px",
-              color: "#111827",
+              color: "#14161C",
             }}
           >
             Je suis :
@@ -184,7 +184,7 @@ export default function RegisterPage() {
             style={{
               border:
                 watch("role") === "exporter"
-                  ? "2px solid #4f46e5"
+                  ? "2px solid #B8720A"
                   : "1px solid #ddd",
               borderRadius: "16px",
               padding: "18px",
@@ -192,7 +192,7 @@ export default function RegisterPage() {
               marginBottom: "12px",
               background:
                 watch("role") === "exporter"
-                  ? "#eef2ff"
+                  ? "#FBF0DC"
                   : "#fff",
             }}
           >
@@ -213,7 +213,7 @@ export default function RegisterPage() {
             style={{
               border:
                 watch("role") === "importer"
-                  ? "2px solid #4f46e5"
+                  ? "2px solid #B8720A"
                   : "1px solid #ddd",
               borderRadius: "16px",
               padding: "18px",
@@ -221,7 +221,7 @@ export default function RegisterPage() {
               marginBottom: "12px",
               background:
                 watch("role") === "importer"
-                  ? "#eef2ff"
+                  ? "#FBF0DC"
                   : "#fff",
             }}
           >
@@ -249,7 +249,7 @@ export default function RegisterPage() {
           {errors.role && (
             <p
               style={{
-                color: "#dc2626",
+                color: "#C22D2D",
                 marginTop: "-4px",
                 marginBottom: "20px",
                 fontSize: "14px",
@@ -263,7 +263,7 @@ export default function RegisterPage() {
             <div
               style={{
                 marginBottom: "15px",
-                color: "#dc2626",
+                color: "#C22D2D",
               }}
             >
               {submitError}
@@ -277,7 +277,7 @@ export default function RegisterPage() {
               padding: "16px",
               border: "none",
               borderRadius: "14px",
-              background: "#4f46e5",
+              background: "#B8720A",
               color: "white",
               fontSize: "16px",
               fontWeight: "600",
@@ -298,7 +298,7 @@ export default function RegisterPage() {
           <Link
             to="/auth/login"
             style={{
-              color: "#4f46e5",
+              color: "#B8720A",
               fontWeight: "600",
               textDecoration: "none",
             }}

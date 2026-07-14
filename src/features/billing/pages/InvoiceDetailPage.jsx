@@ -15,9 +15,6 @@ export default function InvoiceDetailPage() {
   const { item: invoice, isLoading, error } = useResourceItem(getInvoiceById, id);
 
   function handleDownload() {
-    // Aucun générateur de PDF côté client pour l'instant — dès que l'API de
-    // facturation (Stagiaire 2) expose une URL de PDF signée par facture,
-    // remplacer ceci par un vrai lien de téléchargement / window.open(url).
     window.alert(
       `Téléchargement du PDF pour la facture ${id} — fonctionnalité branchée dès que l'API de facturation sera disponible.`
     );

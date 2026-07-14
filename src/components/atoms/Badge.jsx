@@ -14,11 +14,13 @@ export default function Badge({ children, tone = "neutral" }) {
     <span
       style={{
         display: "inline-block",
-        padding: "4px 12px",
-        borderRadius: radius.full,
-        fontSize: typography.fontSizeSm,
+        padding: "4px 11px",
+        borderRadius: radius.sm,
+        fontSize: 11,
         fontFamily: typography.body,
-        fontWeight: 600,
+        fontWeight: 700,
+        letterSpacing: "0.04em",
+        textTransform: "uppercase",
         backgroundColor: bg,
         color: text,
       }}

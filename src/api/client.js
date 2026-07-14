@@ -1,7 +1,6 @@
 import axios from "axios";
 import { getToken, clearToken } from "../utils/tokenStorage";
 
-// Bascule ce flag à false quand l'API backend (Stagiaire 2) est prête
 export const USE_MOCKS = true;
 
 const apiClient = axios.create({

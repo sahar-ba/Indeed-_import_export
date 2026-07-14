@@ -13,7 +13,7 @@ export default function MessagesPage() {
       <div
         style={{
           background:
-            "linear-gradient(135deg,#0f172a,#312e81)",
+            "linear-gradient(135deg,#14161C,#312e81)",
           borderRadius: "32px",
           padding: "60px",
           color: "white",
@@ -88,7 +88,7 @@ export default function MessagesPage() {
           padding: "50px",
           position: "relative",
           overflow: "hidden",
-          border: "1px solid #e5e7eb",
+          border: "1px solid #E4E2DC",
           marginBottom: "40px",
         }}
       >
@@ -134,7 +134,7 @@ export default function MessagesPage() {
           >
             <div
               style={{
-                background: "#f8fafc",
+                background: "#F6F5F2",
                 padding: "14px",
                 borderRadius: "14px",
                 maxWidth: "60%",
@@ -146,7 +146,7 @@ export default function MessagesPage() {
 
             <div
               style={{
-                background: "#4f46e5",
+                background: "#B8720A",
                 color: "#fff",
                 padding: "14px",
                 borderRadius: "14px",
@@ -159,7 +159,7 @@ export default function MessagesPage() {
 
             <div
               style={{
-                background: "#f8fafc",
+                background: "#F6F5F2",
                 padding: "14px",
                 borderRadius: "14px",
                 maxWidth: "60%",
@@ -211,7 +211,7 @@ export default function MessagesPage() {
 
             <p
               style={{
-                color: "#64748b",
+                color: "#6B6D76",
                 lineHeight: 1.8,
                 marginBottom: "30px",
               }}
@@ -230,7 +230,7 @@ export default function MessagesPage() {
                   padding: "16px 26px",
                   fontWeight: "700",
                   background:
-                    "linear-gradient(135deg,#4f46e5,#4338ca)",
+                    "linear-gradient(135deg,#B8720A,#9C5E08)",
                   color: "#fff",
                   cursor: "pointer",
                   boxShadow:
@@ -259,7 +259,7 @@ function FeatureCard({
         background: "#fff",
         borderRadius: "20px",
         padding: "24px",
-        border: "1px solid #e5e7eb",
+        border: "1px solid #E4E2DC",
         textAlign: "center",
       }}
     >
@@ -276,7 +276,7 @@ function FeatureCard({
 
       <p
         style={{
-          color: "#64748b",
+          color: "#6B6D76",
         }}
       >
         {description}

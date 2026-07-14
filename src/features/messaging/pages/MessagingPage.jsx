@@ -37,6 +37,31 @@ function formatTime(iso) {
   });
 }
 
+// Détermine si une pièce jointe est une image (pour afficher une miniature
+// cliquable plutôt qu'une simple icône de document).
+function isImageAttachment(attachment) {
+  if (attachment?.file?.type) return attachment.file.type.startsWith("image/");
+  return /\.(png|jpe?g|webp|gif)$/i.test(attachment?.name || "");
+}
+
+// URL à ouvrir/prévisualiser pour une pièce jointe. En mode mock, un
+// fichier tout juste sélectionné par l'utilisateur n'existe que côté
+// navigateur : on génère une URL locale (blob:) via URL.createObjectURL,
+// qui reste valable tant que l'onglet n'est pas fermé. Une fois un vrai
+// backend branché, `attachment.url` (renvoyé par le serveur) prendra le
+// relais automatiquement.
+function getAttachmentUrl(attachment) {
+  if (!attachment) return null;
+  if (attachment.url) return attachment.url;
+  if (attachment.file) {
+    if (!attachment.file.__objectUrl) {
+      attachment.file.__objectUrl = URL.createObjectURL(attachment.file);
+    }
+    return attachment.file.__objectUrl;
+  }
+  return null;
+}
+
 export default function MessagingPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -54,14 +79,14 @@ export default function MessagingPage() {
         style={{
           width: "300px",
           backgroundColor: "white",
-          borderRight: "1px solid #e5e7eb",
+          borderRight: "1px solid #E4E2DC",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
       >
-        <div style={{ padding: "16px", borderBottom: "1px solid #e5e7eb" }}>
-          <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#111827", margin: 0 }}>
+        <div style={{ padding: "16px", borderBottom: "1px solid #E4E2DC" }}>
+          <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#14161C", margin: 0 }}>
             Conversations
           </h2>
           <p style={{ fontSize: "12px", color: "#6b7280", margin: "4px 0 0 0" }}>
@@ -90,8 +115,8 @@ export default function MessagingPage() {
                     textAlign: "left",
                     padding: "12px 12px",
                     border: "none",
-                    backgroundColor: isActive ? "#eef2ff" : "transparent",
-                    borderLeft: isActive ? "4px solid #4f46e5" : "4px solid transparent",
+                    backgroundColor: isActive ? "#FBF0DC" : "transparent",
+                    borderLeft: isActive ? "4px solid #B8720A" : "4px solid transparent",
                     cursor: "pointer",
                     transition: "background-color 0.2s ease",
                   }}
@@ -125,7 +150,7 @@ export default function MessagingPage() {
                         margin: 0,
                         fontWeight: 600,
                         fontSize: 13,
-                        color: "#111827",
+                        color: "#14161C",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -255,7 +280,7 @@ function ConversationThread({ conversation, onRefetch }) {
       <div
         style={{
           padding: "16px 20px",
-          borderBottom: "1px solid #e5e7eb",
+          borderBottom: "1px solid #E4E2DC",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -273,7 +298,7 @@ function ConversationThread({ conversation, onRefetch }) {
               border: "none",
               background: "none",
               cursor: "pointer",
-              color: "#4f46e5",
+              color: "#B8720A",
               padding: 4,
               flexShrink: 0,
             }}
@@ -281,7 +306,7 @@ function ConversationThread({ conversation, onRefetch }) {
             <ArrowLeft size={20} />
           </button>
           <div>
-            <p style={{ margin: 0, fontWeight: 700, color: "#111827", display: "flex", alignItems: "center", gap: 8 }}>
+            <p style={{ margin: 0, fontWeight: 700, color: "#14161C", display: "flex", alignItems: "center", gap: 8 }}>
               {conversation.counterpart.name}
               {conversation.counterpart.role && (
                 <span
@@ -290,8 +315,8 @@ function ConversationThread({ conversation, onRefetch }) {
                     alignItems: "center",
                     padding: "2px 8px",
                     borderRadius: 999,
-                    background: "#eef2ff",
-                    color: "#4f46e5",
+                    background: "#FBF0DC",
+                    color: "#B8720A",
                     fontSize: 11,
                     fontWeight: 700,
                   }}
@@ -323,9 +348,9 @@ function ConversationThread({ conversation, onRefetch }) {
                   style={{
                     padding: "6px 12px",
                     borderRadius: 999,
-                    border: "1px solid #4f46e5",
-                    backgroundColor: "#eef2ff",
-                    color: "#4f46e5",
+                    border: "1px solid #B8720A",
+                    backgroundColor: "#FBF0DC",
+                    color: "#B8720A",
                     fontSize: 12,
                     fontWeight: 700,
                     cursor: "pointer",
@@ -341,7 +366,7 @@ function ConversationThread({ conversation, onRefetch }) {
                   borderRadius: 999,
                   border: "1px solid #fecaca",
                   backgroundColor: "#fef2f2",
-                  color: "#dc2626",
+                  color: "#C22D2D",
                   fontSize: 12,
                   fontWeight: 700,
                   cursor: "pointer",
@@ -382,7 +407,7 @@ function ConversationThread({ conversation, onRefetch }) {
                   width: 28,
                   height: 28,
                   borderRadius: "50%",
-                  backgroundColor: isMine ? "#4f46e5" : "#c7d2fe",
+                  backgroundColor: isMine ? "#B8720A" : "#c7d2fe",
                   color: isMine ? "#fff" : "#3730a3",
                   display: "flex",
                   alignItems: "center",
@@ -402,30 +427,79 @@ function ConversationThread({ conversation, onRefetch }) {
                     borderRadius: 16,
                     borderBottomRightRadius: isMine ? 4 : 16,
                     borderBottomLeftRadius: isMine ? 16 : 4,
-                    backgroundColor: isMine ? "#4f46e5" : "#f3f4f6",
-                    color: isMine ? "#fff" : "#111827",
+                    backgroundColor: isMine ? "#B8720A" : "#f3f4f6",
+                    color: isMine ? "#fff" : "#14161C",
                     fontSize: 14,
                     lineHeight: 1.4,
                   }}
                 >
                   {msg.text}
-                  {msg.attachment && (
-                    <div
-                      style={{
-                        marginTop: 8,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6,
-                        padding: "6px 10px",
-                        borderRadius: 10,
-                        backgroundColor: isMine ? "rgba(255,255,255,0.15)" : "#e5e7eb",
-                        fontSize: 12,
-                      }}
-                    >
-                      <Paperclip size={13} />
-                      {msg.attachment.name}
-                    </div>
-                  )}
+                  {msg.attachment && (() => {
+                    const url = getAttachmentUrl(msg.attachment);
+                    const isImage = isImageAttachment(msg.attachment);
+
+                    // Image : miniature cliquable qui ouvre la photo en
+                    // taille réelle dans un nouvel onglet.
+                    if (isImage && url) {
+                      return (
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={`Ouvrir ${msg.attachment.name}`}
+                          style={{ display: "block", marginTop: 8 }}
+                        >
+                          <img
+                            src={url}
+                            alt={msg.attachment.name}
+                            style={{
+                              maxWidth: 220,
+                              maxHeight: 220,
+                              borderRadius: 10,
+                              display: "block",
+                              cursor: "pointer",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </a>
+                      );
+                    }
+
+                    // Autre document (PDF, etc.) : bandeau cliquable qui
+                    // ouvre/télécharge le fichier dans un nouvel onglet.
+                    const content = (
+                      <div
+                        style={{
+                          marginTop: 8,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          padding: "6px 10px",
+                          borderRadius: 10,
+                          backgroundColor: isMine ? "rgba(255,255,255,0.15)" : "#E4E2DC",
+                          fontSize: 12,
+                          cursor: url ? "pointer" : "default",
+                        }}
+                      >
+                        <Paperclip size={13} />
+                        {msg.attachment.name}
+                      </div>
+                    );
+
+                    return url ? (
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={`Ouvrir ${msg.attachment.name}`}
+                        style={{ color: "inherit", textDecoration: "none" }}
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      content
+                    );
+                  })()}
                 </div>
                 <p
                   style={{
@@ -475,7 +549,7 @@ function ConversationThread({ conversation, onRefetch }) {
                 padding: "10px 18px",
                 border: "none",
                 borderRadius: 10,
-                background: "linear-gradient(135deg,#4f46e5,#4338ca)",
+                background: "linear-gradient(135deg,#B8720A,#9C5E08)",
                 color: "#fff",
                 fontWeight: 700,
                 fontSize: 13,
@@ -494,7 +568,7 @@ function ConversationThread({ conversation, onRefetch }) {
             style={{
               padding: "8px 20px",
               borderTop: "1px solid #f1f5f9",
-              backgroundColor: usage.maxChats - usage.usedChats <= 10 ? "#fffbeb" : "#f8fafc",
+              backgroundColor: usage.maxChats - usage.usedChats <= 10 ? "#fffbeb" : "#F6F5F2",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -518,7 +592,7 @@ function ConversationThread({ conversation, onRefetch }) {
             {usage.maxChats - usage.usedChats <= 10 && (
               <Link
                 to="/billing/plans"
-                style={{ fontSize: 12, fontWeight: 700, color: "#4f46e5" }}
+                style={{ fontSize: 12, fontWeight: 700, color: "#B8720A" }}
               >
                 Voir les offres →
               </Link>
@@ -536,7 +610,7 @@ function ConversationThread({ conversation, onRefetch }) {
         }}
       >
         {attachmentError && (
-          <p style={{ color: "#dc2626", fontSize: 12, margin: 0 }}>⚠️ {attachmentError}</p>
+          <p style={{ color: "#C22D2D", fontSize: 12, margin: 0 }}>⚠️ {attachmentError}</p>
         )}
         {attachment && (
           <div
@@ -545,8 +619,8 @@ function ConversationThread({ conversation, onRefetch }) {
               alignItems: "center",
               gap: 6,
               fontSize: 12,
-              color: "#4f46e5",
-              backgroundColor: "#eef2ff",
+              color: "#B8720A",
+              backgroundColor: "#FBF0DC",
               padding: "6px 10px",
               borderRadius: 8,
               width: "fit-content",
@@ -560,7 +634,7 @@ function ConversationThread({ conversation, onRefetch }) {
                 setAttachment(null);
                 setAttachmentError(null);
               }}
-              style={{ border: "none", background: "none", cursor: "pointer", color: "#4f46e5", fontWeight: 700 }}
+              style={{ border: "none", background: "none", cursor: "pointer", color: "#B8720A", fontWeight: 700 }}
             >
               ×
             </button>
@@ -571,7 +645,7 @@ function ConversationThread({ conversation, onRefetch }) {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             style={{
-              border: "1px solid #e5e7eb",
+              border: "1px solid #E4E2DC",
               backgroundColor: "#fff",
               borderRadius: 12,
               width: 42,
@@ -615,7 +689,7 @@ function ConversationThread({ conversation, onRefetch }) {
               flex: 1,
               padding: "12px 16px",
               borderRadius: 12,
-              border: "1px solid #e5e7eb",
+              border: "1px solid #E4E2DC",
               fontSize: 14,
               outline: "none",
             }}
@@ -631,7 +705,7 @@ function ConversationThread({ conversation, onRefetch }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: "linear-gradient(135deg,#4f46e5,#4338ca)",
+              background: "linear-gradient(135deg,#B8720A,#9C5E08)",
               cursor: isSending ? "default" : "pointer",
               opacity: isSending || (!text.trim() && !attachment) ? 0.5 : 1,
               flexShrink: 0,

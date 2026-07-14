@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
       style={{
         minHeight: "100vh",
         background:
-          "linear-gradient(180deg,#f8fafc 0%,#eef2ff 100%)",
+          "linear-gradient(180deg,#F6F5F2 0%,#FBF0DC 100%)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
               fontSize: "36px",
               fontWeight: "800",
               marginBottom: "12px",
-              color: "#111827",
+              color: "#14161C",
             }}
           >
             Mot de passe oublié
@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
 
           <p
             style={{
-              color: "#64748b",
+              color: "#6B6D76",
               lineHeight: 1.7,
             }}
           >
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
                 style={{
                   width: "100%",
                   padding: "14px",
-                  border: `1px solid ${errors.email ? "#dc2626" : "#d1d5db"}`,
+                  border: `1px solid ${errors.email ? "#C22D2D" : "#E4E2DC"}`,
                   borderRadius: "12px",
                   fontSize: "16px",
                   boxSizing: "border-box",
@@ -128,7 +128,7 @@ export default function ForgotPasswordPage() {
               {errors.email && (
                 <p
                   style={{
-                    color: "#dc2626",
+                    color: "#C22D2D",
                     marginTop: "6px",
                     fontSize: "14px",
                   }}
@@ -145,7 +145,7 @@ export default function ForgotPasswordPage() {
                   padding: "12px 14px",
                   borderRadius: "10px",
                   background: "#fef2f2",
-                  color: "#dc2626",
+                  color: "#C22D2D",
                   fontSize: "14px",
                 }}
               >
@@ -162,7 +162,7 @@ export default function ForgotPasswordPage() {
                 border: "none",
                 borderRadius: "14px",
                 background:
-                  "linear-gradient(135deg,#4f46e5,#4338ca)",
+                  "linear-gradient(135deg,#B8720A,#9C5E08)",
                 color: "#fff",
                 fontWeight: "700",
                 fontSize: "16px",
@@ -198,7 +198,7 @@ export default function ForgotPasswordPage() {
 
             <p
               style={{
-                color: "#64748b",
+                color: "#6B6D76",
                 lineHeight: 1.7,
               }}
             >
@@ -222,7 +222,7 @@ export default function ForgotPasswordPage() {
             style={{
               border: "none",
               background: "transparent",
-              color: "#4f46e5",
+              color: "#B8720A",
               fontWeight: "600",
               cursor: "pointer",
               fontSize: "15px",
