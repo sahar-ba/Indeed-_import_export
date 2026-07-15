@@ -1,24 +1,136 @@
-# Import / Export Backend
+# Import Export Platform API
 
-API FastAPI pour les comptes exportateurs/importateurs, annonces, messagerie, paiement et intégrations.
+Backend API développé avec FastAPI pour la gestion d’une plateforme d’échanges internationaux. Le service couvre les fonctionnalités d’authentification, de gestion des annonces, de messagerie, de facturation et d’intégrations métiers.
 
-## Démarrage
+## Présentation du projet
 
-1. Créer l'environnement virtuel puis installer `pip install -r requirements.txt`.
-2. Copier `.env.example` vers `.env` et renseigner PostgreSQL et les secrets.
-3. Lancer `uvicorn main:app --reload`.
+Cette application fournit une API sécurisée et évolutive pour les acteurs du domaine import/export. Elle permet de :
 
-Si le dossier `venv` a été créé avec une version de Python supprimée, le recréer :
+- gérer l’authentification et les autorisations des utilisateurs ;
+- administrer des listings / annonces commerciales ;
+- gérer les conversations et la messagerie interne ;
+- traiter les paiements et abonnements via Stripe ;
+- exposer une documentation API interactive et un schéma OpenAPI.
 
-`rmdir /s /q venv && py -m venv venv && venv\\Scripts\\pip install -r requirements.txt`
+## Stack technique
 
-La documentation interactive est disponible sur `/docs`, le schéma OpenAPI sur `/openapi.json`.
+- Python 3.10+
+- FastAPI
+- SQLAlchemy
+- PostgreSQL
+- Alembic
+- JWT pour l’authentification
+- Stripe pour les paiements
+- Pytest pour les tests
 
-## Services externes
+## Prérequis
 
-- Change : endpoint `GET /api/currency/convert?amount=100&from=EUR&to=USD`, avec cache d'une heure.
-- Logistique : `GET /api/logistics/estimate?from=NG&to=FR`.
-- Stripe : renseigner `STRIPE_SECRET_KEY` avant les routes de paiement. Le webhook est `POST /api/billing/webhook`.
-- Notifications : les routes `/api/notifications/email` et `/api/notifications/sms` gardent une trace en base ; connecter les clés SendGrid/Twilio dans l'adaptateur avant l'envoi réel.
+Avant de démarrer, assurez-vous d’avoir installé :
 
-Les messages temps réel utilisent `WS /api/conversations/ws/{id}?token=<JWT>`.
+- Python 3.10 ou plus récent
+- PostgreSQL
+- pip
+- virtualenv (recommandé)
+
+## Installation
+
+1. Cloner le dépôt :
+
+   ```bash
+   git clone <url-du-repo>
+   cd import_export_backend
+   ```
+
+2. Créer et activer un environnement virtuel :
+
+   ```bash
+   py -m venv venv
+   venv\Scripts\activate
+   ```
+
+3. Installer les dépendances :
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Configurer les variables d’environnement :
+
+   Copier le fichier .env.example vers .env puis renseigner les valeurs nécessaires.
+
+   ```bash
+   copy .env.example .env
+   ```
+
+   Variables principales :
+   - DATABASE_URL
+   - JWT_SECRET
+   - JWT_ALGORITHM
+   - JWT_EXPIRE_MINUTES
+   - STRIPE_SECRET_KEY
+   - STRIPE_WEBHOOK_SECRET
+
+## Exécution
+
+Démarrer l’API localement :
+
+```bash
+uvicorn main:app --reload
+```
+
+L’API sera disponible à l’adresse suivante :
+
+- http://127.0.0.1:8000
+- Documentation Swagger : http://127.0.0.1:8000/docs
+- Schéma OpenAPI : http://127.0.0.1:8000/openapi.json
+
+## Base de données
+
+Les migrations sont gérées avec Alembic.
+
+Appliquer les migrations :
+
+```bash
+alembic upgrade head
+```
+
+## Tests
+
+Exécuter les tests :
+
+```bash
+pytest
+```
+
+## Structure du projet
+
+```text
+app/
+  controllers/
+  models/
+  routes/
+  schemas/
+  services/
+  middleware/
+main.py
+migrations/
+requirements.txt
+```
+
+## Fonctionnalités principales
+
+- Authentification JWT
+- Gestion des utilisateurs et rôles
+- Listings / annonces
+- Conversations et messagerie
+- Intégrations de services externes
+- Paiements et webhooks Stripe
+- Documentation API interactive
+
+## Contribution
+
+Les contributions sont les bienvenues. Veuillez proposer vos changements via une branche dédiée puis ouvrir une pull request.
+
+## Licence
+
+Ce projet est fourni à titre éducatif et de démonstration. La licence peut être adaptée selon les besoins de l’équipe ou du client.
