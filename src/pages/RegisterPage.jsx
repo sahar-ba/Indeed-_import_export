@@ -176,14 +176,20 @@ export default function RegisterPage() {
               color: "#14161C",
             }}
           >
-            Je suis :
+            Je suis : <span style={{ fontWeight: 400, color: "#6b7280", fontSize: 14 }}>(les deux sont possibles)</span>
           </h3>
 
           <div
-            onClick={() => setValue("role", "exporter", { shouldValidate: true })}
+            onClick={() => {
+              const current = watch("role") || [];
+              const next = current.includes("exporter")
+                ? current.filter((r) => r !== "exporter")
+                : [...current, "exporter"];
+              setValue("role", next, { shouldValidate: true });
+            }}
             style={{
               border:
-                watch("role") === "exporter"
+                (watch("role") || []).includes("exporter")
                   ? "2px solid #B8720A"
                   : "1px solid #ddd",
               borderRadius: "16px",
@@ -191,7 +197,7 @@ export default function RegisterPage() {
               cursor: "pointer",
               marginBottom: "12px",
               background:
-                watch("role") === "exporter"
+                (watch("role") || []).includes("exporter")
                   ? "#FBF0DC"
                   : "#fff",
             }}
@@ -209,10 +215,16 @@ export default function RegisterPage() {
           </div>
 
           <div
-            onClick={() => setValue("role", "importer", { shouldValidate: true })}
+            onClick={() => {
+              const current = watch("role") || [];
+              const next = current.includes("importer")
+                ? current.filter((r) => r !== "importer")
+                : [...current, "importer"];
+              setValue("role", next, { shouldValidate: true });
+            }}
             style={{
               border:
-                watch("role") === "importer"
+                (watch("role") || []).includes("importer")
                   ? "2px solid #B8720A"
                   : "1px solid #ddd",
               borderRadius: "16px",
@@ -220,7 +232,7 @@ export default function RegisterPage() {
               cursor: "pointer",
               marginBottom: "12px",
               background:
-                watch("role") === "importer"
+                (watch("role") || []).includes("importer")
                   ? "#FBF0DC"
                   : "#fff",
             }}
@@ -237,12 +249,19 @@ export default function RegisterPage() {
             </p>
           </div>
 
+          <p style={{ color: "#94a3b8", fontSize: 13, marginTop: "-6px", marginBottom: "16px" }}>
+            💡 Vous pouvez cocher les deux si votre entreprise importe certains produits et en exporte d'autres.
+          </p>
+
           {/* Champ caché : c'est lui que react-hook-form valide, les
               cartes ci-dessus ne font que le remplir via setValue. */}
           <input
             type="hidden"
             {...register("role", {
-              required: "Sélectionnez un rôle pour continuer",
+              required: "Sélectionnez au moins un rôle pour continuer",
+              validate: (value) =>
+                (Array.isArray(value) && value.length > 0) ||
+                "Sélectionnez au moins un rôle pour continuer",
             })}
           />
 

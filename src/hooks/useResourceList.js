@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
 /**
- * Hook générique pour charger une liste filtrable depuis n'importe quelle fonction API.
- * Réutilisé pour les annonces, les matches, les conversations, etc.
- *
  * @param {Function} fetchFn - fonction API à appeler, ex: getListings
  * @param {object} initialFilters
  */
@@ -14,6 +11,12 @@ export function useResourceList(fetchFn, initialFilters = {}) {
   const [error, setError] = useState(null);
 
   const fetchItems = useCallback(async () => {
+    if (!fetchFn) {
+      setItems([]);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {

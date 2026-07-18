@@ -459,29 +459,6 @@ export default function MatchingPage() {
                   {selectedMatch.listing?.product || "Annonce"} »
                 </p>
 
-                {selectedMatch.counterpartListing && (
-                  <button
-                    onClick={() => {
-                      navigate(`/listings/${selectedMatch.counterpartListing.id}`);
-                      setSelectedMatch(null);
-                    }}
-                    style={{
-                      border: "none",
-                      background: "none",
-                      padding: 0,
-                      marginTop: 4,
-                      font: "inherit",
-                      fontSize: 13,
-                      color: colors.primary,
-                      fontWeight: 600,
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                    }}
-                  >
-                    📄 Voir l'annonce de {selectedMatch.counterpart?.name || "ce partenaire"} : «{" "}
-                    {selectedMatch.counterpartListing.product} »
-                  </button>
-                )}
               </div>
 
               <button

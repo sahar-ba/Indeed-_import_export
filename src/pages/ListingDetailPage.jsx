@@ -10,6 +10,7 @@ import {
   toggleFavorite,
 } from "../api/favorites";
 import { isImageAttachment, getAttachmentUrl } from "../utils/attachments";
+import { formatRoleLabel } from "../utils/roles";
 import AsyncState from "../components/organisms/AsyncState";
 import DetailCard from "../components/molecules/DetailCard";
 
@@ -25,11 +26,6 @@ import {
   FaBuilding,
   FaUserTie,
 } from "react-icons/fa";
-
-const ROLE_LABEL = {
-  importer: "Importateur",
-  exporter: "Exportateur",
-};
 
 export default function ListingDetailPage() {
   const { id } = useParams();
@@ -565,7 +561,7 @@ const isMyListing =
                             }}
                           >
                             <FaUserTie />
-                            {ROLE_LABEL[ownerAccount.role] ||
+                            {formatRoleLabel(ownerAccount.role) ||
                               ownerAccount.role}
                           </span>
 

@@ -4,10 +4,8 @@ import { Menu, X } from "lucide-react";
 import { colors, spacing, typography } from "../../styles/tokens";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Accueil", end: true },
   { to: "/listings", label: "Annonces" },
   { to: "/Vmessages", label: "Messagerie" },
-  { to: "/billing", label: "Facturation" },
   { to: "/contact", label: "Contact" },
 ];
 

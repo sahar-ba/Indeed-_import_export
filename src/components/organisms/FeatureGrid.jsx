@@ -3,15 +3,25 @@ import { colors, radius, shadow, spacing, typography } from "../../styles/tokens
 import Reveal from "../atoms/Reveal";
 
 const FEATURES = [
-  {
-    Icon: Sparkles,
-    title: "Matching intelligent",
-    description: "Un système de recommandation identifie les partenaires les plus pertinents selon votre secteur et vos critères.",
+    {
+    Icon: Globe2,
+    title: "Portée internationale",
+    description: "Un réseau d'importateurs et d'exportateurs actifs sur plusieurs continents.",
   },
   {
     Icon: ShieldCheck,
     title: "Profils vérifiés",
-    description: "Chaque entreprise passe par une vérification de profil avant de pouvoir publier ou contacter.",
+    description: "Chaque entreprise passe par une vérification de profil.",
+  },
+  {
+    Icon: Gauge,
+    title: "Mise en relation rapide",
+    description: "Publiez une annonce et recevez vos premières suggestions de partenaires en quelques minutes.",
+  },
+  {
+    Icon: Sparkles,
+    title: "Matching intelligent",
+    description: "Un système de recommandation identifie les partenaires les plus pertinents selon votre secteur et vos critères.",
   },
   {
     Icon: MessageSquare,
@@ -22,16 +32,6 @@ const FEATURES = [
     Icon: CreditCard,
     title: "Facturation sécurisée",
     description: "Gérez vos abonnements et paiements en toute sécurité, avec un historique clair.",
-  },
-  {
-    Icon: Globe2,
-    title: "Portée internationale",
-    description: "Un réseau d'importateurs et d'exportateurs actifs sur plusieurs continents.",
-  },
-  {
-    Icon: Gauge,
-    title: "Mise en relation rapide",
-    description: "Publiez une annonce et recevez vos premières suggestions de partenaires en quelques minutes.",
   },
 ];
 

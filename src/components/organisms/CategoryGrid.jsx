@@ -3,7 +3,8 @@ import { Wheat, Zap, Shirt, Cpu, Car, FlaskConical, Building2, Cog, Package } fr
 import CategoryCard from "./CategoryCard";
 import { spacing } from "../../styles/tokens";
 import { useResourceList } from "../../hooks/useResourceList";
-import { getListings } from "../../api/listings";
+import { getListings, getMyListings } from "../../api/listings";
+import { useAuth } from "../../context/AuthContext";
 
 const CATEGORIES = [
   { label: "Agroalimentaire", category: "Agroalimentaire", Icon: Wheat },
@@ -17,14 +18,15 @@ const CATEGORIES = [
   { label: "Emballage & Logistique", category: "Emballage & Logistique", Icon: Package },
 ];
 
-// Nombre de secteurs mis en avant (case plus grande) — les plus actifs
-// en nombre d'annonces réelles, pas un choix arbitraire.
 const HIGHLIGHT_COUNT = 2;
 
 export default function CategoryGrid() {
-  const { items: listings } = useResourceList(getListings);
+  const { user } = useAuth();
+  const { items: listings } = useResourceList(user ? getMyListings : null);
 
   const topCategories = useMemo(() => {
+    if (!user || listings.length === 0) return [];
+
     const counts = {};
     for (const listing of listings) {
       if (!listing.category) continue;
@@ -34,7 +36,7 @@ export default function CategoryGrid() {
       .sort((a, b) => b[1] - a[1])
       .slice(0, HIGHLIGHT_COUNT)
       .map(([category]) => category);
-  }, [listings]);
+  }, [user, listings]);
 
   return (
     <div

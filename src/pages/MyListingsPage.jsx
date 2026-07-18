@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import FilterBar from "../components/organisms/FilterBar";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useResourceList } from "../hooks/useResourceList";
 import { getMyListings, updateListing, deleteListing } from "../api/listings";
 import AsyncState from "../components/organisms/AsyncState";
@@ -103,7 +103,11 @@ export default function MyListingsPage() {
   // Action en attente de confirmation : { type: "edit" | "suspend" | "reactivate" | "close", listing }
   const [confirmAction, setConfirmAction] =
     useState(null);
-const [filters, setFilters] = useState({});
+const [searchParams] = useSearchParams();
+const [filters, setFilters] = useState(() => {
+  const categoryFromUrl = searchParams.get("category");
+  return categoryFromUrl ? { category: categoryFromUrl } : {};
+});
   async function handleStatusChange(
     id,
     status

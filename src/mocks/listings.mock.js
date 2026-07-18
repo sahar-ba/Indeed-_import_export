@@ -72,7 +72,7 @@ export const mockListings = [
 
     country: "Maroc",
 
-    category: "Industrie",
+    category: "Machines industrielles",
 
     incoterm: "CIF",
 
@@ -128,11 +128,6 @@ export const mockListings = [
       
     ],
   },
-
-  // Annonces réelles appartenant aux entreprises partenaires (counterparts)
-  // des correspondances IA (mockMatches ci-dessous) — pour que "Voir
-  // l'annonce du partenaire" pointe vers un vrai contenu, distinct de
-  // l'annonce de l'utilisateur connecté.
   {
     id: "4",
     type: "offer",

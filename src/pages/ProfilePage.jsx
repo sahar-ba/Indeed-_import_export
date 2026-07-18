@@ -10,6 +10,7 @@ import Select from "../components/atoms/Select";
 import Button from "../components/atoms/Button";
 import { uploadCompanyLogo } from "../api/auth";
 import { colors, spacing, typography } from "../styles/tokens";
+import { toRoleArray, ROLE_LABEL } from "../utils/roles";
 
 const COUNTRY_OPTIONS = [
   "Tunisie",
@@ -32,8 +33,8 @@ const SECTOR_OPTIONS = [
 ].map((s) => ({ value: s, label: s }));
 
 const ROLE_OPTIONS = [
-  { value: "Exportateur", label: "Exportateur" },
-  { value: "Importateur", label: "Importateur" },
+  { value: "exporter", label: "Exportateur" },
+  { value: "importer", label: "Importateur" },
 ];
 
 function FieldLabel({ children }) {
@@ -59,8 +60,9 @@ export default function ProfilePage() {
   const [accountInfo, setAccountInfo] = useState({
     email: user?.email || "",
     phone: user?.phone || "",
-    role: user?.role || "Exportateur",
+    role: toRoleArray(user?.role).length > 0 ? toRoleArray(user?.role) : ["exporter"],
   });
+  const [accountSaved, setAccountSaved] = useState(false);
 
   const [companyInfo, setCompanyInfo] = useState({
     companyName: user?.profile?.companyName || "Olive Tunisia",
@@ -164,7 +166,7 @@ export default function ProfilePage() {
             </h3>
 
             <p style={{ color: colors.textMuted, fontFamily: typography.body, fontSize: 14, marginBottom: 12 }}>
-              {accountInfo.role}
+              {accountInfo.role.map((r) => ROLE_LABEL[r] || r).join(" & ")}
             </p>
 
             <StatusBadge status={user?.profileStatus || "pending"} />
@@ -204,14 +206,68 @@ export default function ProfilePage() {
               />
 
               <FieldLabel>Type de compte</FieldLabel>
-              <Select
-                value={accountInfo.role}
-                options={ROLE_OPTIONS}
-                onChange={(value) => setAccountInfo({ ...accountInfo, role: value })}
-              />
+              <p style={{ color: colors.textMuted, fontSize: 13, marginTop: -4, marginBottom: 10 }}>
+                Vous pouvez cocher les deux si vous importez certains produits et en exportez d'autres.
+              </p>
+              <div style={{ display: "flex", gap: spacing.sm, flexWrap: "wrap", marginBottom: spacing.sm }}>
+                {ROLE_OPTIONS.map((option) => {
+                  const isChecked = accountInfo.role.includes(option.value);
+                  return (
+                    <label
+                      key={option.value}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        padding: "10px 14px",
+                        border: `1px solid ${isChecked ? colors.primary : colors.border}`,
+                        borderRadius: 10,
+                        backgroundColor: isChecked ? "#FBF0DC" : "#fff",
+                        cursor: "pointer",
+                        fontFamily: typography.body,
+                        fontSize: 14,
+                        fontWeight: isChecked ? 700 : 500,
+                        color: colors.textPrimary,
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => {
+                          const next = isChecked
+                            ? accountInfo.role.filter((r) => r !== option.value)
+                            : [...accountInfo.role, option.value];
+                          // Au moins un rôle doit rester sélectionné
+                          if (next.length > 0) {
+                            setAccountInfo({ ...accountInfo, role: next });
+                          }
+                        }}
+                      />
+                      {option.label}
+                    </label>
+                  );
+                })}
+              </div>
 
-              <div style={{ marginTop: spacing.sm }}>
-                <Button>Enregistrer</Button>
+              <div style={{ marginTop: spacing.sm, display: "flex", alignItems: "center", gap: spacing.sm }}>
+                <Button
+                  onClick={() => {
+                    updateUser({
+                      email: accountInfo.email,
+                      phone: accountInfo.phone,
+                      role: accountInfo.role,
+                    });
+                    setAccountSaved(true);
+                    setTimeout(() => setAccountSaved(false), 2500);
+                  }}
+                >
+                  Enregistrer
+                </Button>
+                {accountSaved && (
+                  <span style={{ color: colors.success, fontSize: 13, fontWeight: 600 }}>
+                    ✅ Modifications enregistrées
+                  </span>
+                )}
               </div>
             </SectionCard>
           </Reveal>

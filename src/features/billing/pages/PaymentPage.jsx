@@ -174,25 +174,7 @@ export default function PaymentPage() {
 
   return (
     <div style={{ maxWidth: 520, margin: "0 auto" }}>
-      {/* Bandeau de confiance — imite une barre d'adresse sécurisée */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          backgroundColor: "#f0fdf4",
-          border: "1px solid #bbf7d0",
-          borderRadius: 10,
-          padding: "8px 14px",
-          marginBottom: 20,
-          fontSize: 13,
-          color: "#166534",
-          fontFamily: "monospace",
-        }}
-      >
-        <Lock size={14} />
-        https://secure-payment.indeed2.com
-      </div>
+      
 
       <div
         style={{

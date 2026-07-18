@@ -11,7 +11,8 @@ export default function CategoryCard({ label, Icon, category, big, count }) {
   const handleClick = () => {
     const query = `?category=${encodeURIComponent(category)}`;
     if (user) {
-      navigate(`/listings/catalog${query}`);
+      // Connecté : on explore ses propres annonces par secteur.
+      navigate(`/listings/mine${query}`);
     } else {
       navigate(`/listings${query}`);
     }

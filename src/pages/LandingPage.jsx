@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FaArrowUp } from "react-icons/fa";
 import Button from "../components/atoms/Button";
 import Reveal from "../components/atoms/Reveal";
 import StepCard from "../components/organisms/StepCard";
@@ -27,6 +29,23 @@ const STEPS = [
 ];
 
 export default function LandingPage() {
+  // --- Bouton "remonter en haut" ---
+  // Apparaît uniquement après un certain scroll, pour ne pas encombrer
+  // l'écran quand on est déjà en haut de la page.
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div>
       {/* HERO */}
@@ -202,6 +221,35 @@ export default function LandingPage() {
           ))}
         </div>
       </div>
+
+      {/* BOUTON REMONTER EN HAUT */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          aria-label="Remonter en haut de la page"
+          style={{
+            position: "fixed",
+            bottom: "32px",
+            right: "32px",
+            width: "48px",
+            height: "48px",
+            borderRadius: "50%",
+            border: "none",
+            cursor: "pointer",
+            backgroundColor: colors.ink,
+            color: "#fff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
+            zIndex: 1000,
+            transition: "opacity 0.2s ease, transform 0.2s ease",
+          }}
+        >
+          <FaArrowUp />
+        </button>
+      )}
     </div>
   );
 }
