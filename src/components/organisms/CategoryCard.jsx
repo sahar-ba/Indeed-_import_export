@@ -12,7 +12,7 @@ export default function CategoryCard({ label, Icon, category, big, count }) {
     const query = `?category=${encodeURIComponent(category)}`;
     if (user) {
       // Connecté : on explore ses propres annonces par secteur.
-      navigate(`/listings/catalog${query}`);
+      navigate(`/listings/mine${query}`);
     } else {
       navigate(`/listings${query}`);
     }
