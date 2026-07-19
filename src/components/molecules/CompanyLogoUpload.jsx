@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, useEffect } from "react";
 import { Camera } from "lucide-react";
 import { colors, typography } from "../../styles/tokens";
 
@@ -22,11 +22,13 @@ export default function CompanyLogoUpload({
   const inputRef = useRef(null);
   const inputId = useId();
   const [error, setError] = useState("");
+  const [imgFailed, setImgFailed] = useState(false);
 
   const initial = (companyName || "?").trim().charAt(0).toUpperCase();
 
   function handleFile(file) {
     setError("");
+    setImgFailed(false);
 
     if (!ACCEPTED_LOGO_TYPES.includes(file.type)) {
       setError("Formats acceptés : JPG, PNG ou WEBP");
@@ -38,6 +40,14 @@ export default function CompanyLogoUpload({
     }
     onFileSelected(file);
   }
+
+  // Nouvelle image (nouvel upload) : on redonne sa chance à l'affichage
+  // plutôt que de rester bloqué sur l'échec de la précédente.
+  useEffect(() => {
+    setImgFailed(false);
+  }, [logoUrl]);
+
+  const showImage = logoUrl && !imgFailed;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -53,7 +63,7 @@ export default function CompanyLogoUpload({
           margin: "0 auto 16px",
           cursor: isUploading ? "default" : "pointer",
           overflow: "hidden",
-          background: logoUrl
+          background: showImage
             ? colors.surface
             : `linear-gradient(135deg, ${colors.primary}, ${colors.primaryHover})`,
           border: `1px solid ${colors.border}`,
@@ -66,11 +76,17 @@ export default function CompanyLogoUpload({
           WebkitTapHighlightColor: "transparent",
         }}
       >
-        {logoUrl ? (
+        {showImage ? (
           <img
             src={logoUrl}
             alt={`Logo ${companyName || "entreprise"}`}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            onError={() => {
+              setImgFailed(true);
+              setError(
+                "Cette image n'a pas pu s'afficher (format non pris en charge par le navigateur). Essayez une autre photo (JPG, PNG ou WEBP)."
+              );
+            }}
           />
         ) : (
           <span

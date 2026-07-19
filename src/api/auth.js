@@ -30,6 +30,21 @@ export async function getCurrentUser() {
   return data;
 }
 
+/**
+ * Upload du logo entreprise. En mode mock, on génère une URL locale
+ * (URL.createObjectURL) pour afficher l'image immédiatement sans backend —
+ * une fois un vrai serveur branché, il suffira de renvoyer l'URL du
+ * fichier stocké (S3, etc.) à la place.
+ *
+ * Pourquoi pas FileReader.readAsDataURL : ça charge tout le fichier encodé
+ * en base64 (+33% de taille) en mémoire sous forme de chaîne. Sur mobile,
+ * une photo prise directement avec l'appareil photo (souvent plusieurs Mo,
+ * résolution capteur complète) peut faire échouer cette lecture selon la
+ * mémoire disponible du navigateur — d'où l'erreur "Impossible de lire le
+ * fichier." qui n'apparaissait quasiment jamais sur desktop. createObjectURL
+ * ne fait que référencer le fichier déjà en mémoire, sans le recopier/
+ * ré-encoder : nettement plus léger et fiable, y compris sur mobile.
+ */
 export async function uploadCompanyLogo(file) {
   if (USE_MOCKS) {
     await delay(400);
