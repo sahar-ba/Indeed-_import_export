@@ -8,7 +8,6 @@ import { FaHeart } from "react-icons/fa";
 const NAV_ITEMS = [
   { to: "/listings/catalog", label: "Annonces" },
   { to: "/listings/mine", label: "Mes annonces" },
-  { to: "/favorites", label: "Favoris" },
   { to: "/matching", label: "Matching IA" },
   { to: "/messages", label: "Messagerie" },
   { to: "/billing", label: "Facturation" },
