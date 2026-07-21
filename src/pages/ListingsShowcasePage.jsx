@@ -166,6 +166,7 @@ export default function ListingsShowcasePage() {
           <button
             style={{
               marginLeft: "20px",
+              marginTop: "20px",
               border: "none",
               borderRadius: "14px",
               padding: "16px 28px",
